@@ -11,8 +11,8 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    
-    private var placesArray = ["First", "Second", "Third"]
+        
+    private var places = PlaceModel.generatePlaces()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +22,8 @@ class ViewController: UIViewController {
     }
     
     private func setupViews() {
-        navigationItem.title = "Root"
+        navigationItem.title = "Best Places"
+        navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         view.addSubview(placesTableView)
     }
     
@@ -32,11 +33,14 @@ class ViewController: UIViewController {
         placesTableView.register(PlaceCell.self, forCellReuseIdentifier: PlaceCell.placeCellId)
     }
     
+    @IBAction private func addButtonTapped() {
+        print("addButtonTapped works")
+    }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        placesArray.count
+        places.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -45,8 +49,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = placesTableView.dequeueReusableCell(withIdentifier: PlaceCell.placeCellId, for: indexPath) as? PlaceCell else { return UITableViewCell() }
-        cell.configure(textLabel: placesArray[indexPath.row],
-                       imageName: placesArray[indexPath.row])
+        cell.configure(name: places[indexPath.row].name,
+                       imageName: places[indexPath.row].image,
+                       location: places[indexPath.row].location,
+                       type: places[indexPath.row].type)
         return cell
     }
 }
