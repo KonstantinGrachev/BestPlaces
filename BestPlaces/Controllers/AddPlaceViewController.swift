@@ -12,6 +12,7 @@ class AddPlaceViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.backgroundColor = .secondarySystemBackground
+        scrollView.bounces = false
         return scrollView
     }()
     
@@ -145,7 +146,7 @@ class AddPlaceViewController: UIViewController {
               let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         
         if notification.name == UIResponder.keyboardWillHideNotification {
-            bottomAnchorScrollViewConstraint?.constant = 0
+            bottomAnchorScrollViewConstraint?.constant = keyboardScreenEndFrame.height
         } else {
             bottomAnchorScrollViewConstraint?.constant = -keyboardScreenEndFrame.height - 10
         }
@@ -192,7 +193,7 @@ extension AddPlaceViewController {
             imageView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: Constants.Constraints.sideIndentation),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Constraints.sideIndentation),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Constraints.sideIndentation),
-            imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5)
+            imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4)
         ])
         
         NSLayoutConstraint.activate([
@@ -210,8 +211,7 @@ extension AddPlaceViewController {
         NSLayoutConstraint.activate([
             typeStackView.topAnchor.constraint(equalTo: locationStackView.bottomAnchor, constant: Constants.Constraints.sideIndentation),
             typeStackView.widthAnchor.constraint(equalTo: imageView.widthAnchor),
-            typeStackView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            typeStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -Constants.Constraints.sideIndentation)
+            typeStackView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor)
         ])
     }
 }
