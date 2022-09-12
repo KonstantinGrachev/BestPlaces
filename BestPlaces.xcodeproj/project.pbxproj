@@ -15,6 +15,8 @@
 		344A19EC28C89B5B00EFC8B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 344A19EA28C89B5B00EFC8B6 /* LaunchScreen.storyboard */; };
 		344A19F428C89BB500EFC8B6 /* PlaceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344A19F328C89BB500EFC8B6 /* PlaceCell.swift */; };
 		348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C628CE00730062F4B3 /* PlaceModel.swift */; };
+		348862C928CEE2BA0062F4B3 /* AddPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */; };
+		348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		344A19ED28C89B5B00EFC8B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		344A19F328C89BB500EFC8B6 /* PlaceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceCell.swift; sourceTree = "<group>"; };
 		348862C628CE00730062F4B3 /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
+		348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaceViewController.swift; sourceTree = "<group>"; };
+		348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,9 +64,10 @@
 		344A19DE28C89B5900EFC8B6 /* BestPlaces */ = {
 			isa = PBXGroup;
 			children = (
+				348862CE28CF19D40062F4B3 /* Controllers */,
+				348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */,
 				344A19DF28C89B5900EFC8B6 /* AppDelegate.swift */,
 				344A19E128C89B5900EFC8B6 /* SceneDelegate.swift */,
-				344A19E328C89B5900EFC8B6 /* ViewController.swift */,
 				348862C628CE00730062F4B3 /* PlaceModel.swift */,
 				344A19F328C89BB500EFC8B6 /* PlaceCell.swift */,
 				344A19E528C89B5900EFC8B6 /* Main.storyboard */,
@@ -71,6 +76,15 @@
 				344A19ED28C89B5B00EFC8B6 /* Info.plist */,
 			);
 			path = BestPlaces;
+			sourceTree = "<group>";
+		};
+		348862CE28CF19D40062F4B3 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */,
+				344A19E328C89B5900EFC8B6 /* ViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,8 +158,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				348862C928CEE2BA0062F4B3 /* AddPlaceViewController.swift in Sources */,
 				344A19E428C89B5900EFC8B6 /* ViewController.swift in Sources */,
 				344A19E028C89B5900EFC8B6 /* AppDelegate.swift in Sources */,
+				348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */,
 				348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */,
 				344A19E228C89B5900EFC8B6 /* SceneDelegate.swift in Sources */,
 				344A19F428C89BB500EFC8B6 /* PlaceCell.swift in Sources */,

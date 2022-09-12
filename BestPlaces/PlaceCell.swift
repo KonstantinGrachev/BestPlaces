@@ -60,19 +60,19 @@ class PlaceCell: UITableViewCell {
     }
     
     private func setupViews() {
+        contentView.backgroundColor = .secondarySystemBackground
         contentView.addSubview(nameLabel)
         contentView.addSubview(locationLabel)
         contentView.addSubview(typeLabel)
         contentView.addSubview(placeImageView)
     }
     
-    func configure(name: String, imageName: String, location: String, type: String) {
-        nameLabel.text = name
-        locationLabel.text = location
-        typeLabel.text = type
-        placeImageView.image = UIImage(named: imageName)
+    func configure(model: PlaceModel) {
+        nameLabel.text = model.name
+        locationLabel.text = model.location
+        typeLabel.text = model.type
+        placeImageView.image = UIImage(named: model.image)
     }
-    
 }
 
 extension PlaceCell {
@@ -105,3 +105,4 @@ extension PlaceCell {
         ])
     }
 }
+

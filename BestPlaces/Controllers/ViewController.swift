@@ -8,6 +8,7 @@ class ViewController: UIViewController {
     
     private let placesTableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .secondarySystemBackground
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -34,7 +35,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction private func addButtonTapped() {
-        print("addButtonTapped works")
+        let addPlaceController = AddPlaceViewController()
+        navigationController?.pushViewController(addPlaceController, animated: true)
     }
 }
 
@@ -49,10 +51,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = placesTableView.dequeueReusableCell(withIdentifier: PlaceCell.placeCellId, for: indexPath) as? PlaceCell else { return UITableViewCell() }
-        cell.configure(name: places[indexPath.row].name,
-                       imageName: places[indexPath.row].image,
-                       location: places[indexPath.row].location,
-                       type: places[indexPath.row].type)
+        cell.configure(model: places[indexPath.row])
         return cell
     }
 }
