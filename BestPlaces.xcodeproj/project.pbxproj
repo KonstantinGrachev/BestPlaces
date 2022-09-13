@@ -14,6 +14,9 @@
 		344A19E928C89B5B00EFC8B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 344A19E828C89B5B00EFC8B6 /* Assets.xcassets */; };
 		344A19EC28C89B5B00EFC8B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 344A19EA28C89B5B00EFC8B6 /* LaunchScreen.storyboard */; };
 		344A19F428C89BB500EFC8B6 /* PlaceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344A19F328C89BB500EFC8B6 /* PlaceCell.swift */; };
+		344D837128D036A100F71E79 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344D837028D036A100F71E79 /* AddViewController.swift */; };
+		344EB1D828D0D8EE00E567FE /* AddImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EB1D728D0D8EE00E567FE /* AddImageCell.swift */; };
+		344EB1DB28D0D94D00E567FE /* AddInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */; };
 		348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C628CE00730062F4B3 /* PlaceModel.swift */; };
 		348862C928CEE2BA0062F4B3 /* AddPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */; };
 		348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */; };
@@ -29,6 +32,9 @@
 		344A19EB28C89B5B00EFC8B6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		344A19ED28C89B5B00EFC8B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		344A19F328C89BB500EFC8B6 /* PlaceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceCell.swift; sourceTree = "<group>"; };
+		344D837028D036A100F71E79 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
+		344EB1D728D0D8EE00E567FE /* AddImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddImageCell.swift; sourceTree = "<group>"; };
+		344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInfoCell.swift; sourceTree = "<group>"; };
 		348862C628CE00730062F4B3 /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
 		348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaceViewController.swift; sourceTree = "<group>"; };
 		348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+extensions.swift"; sourceTree = "<group>"; };
@@ -66,6 +72,7 @@
 			children = (
 				348862CE28CF19D40062F4B3 /* Controllers */,
 				348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */,
+				344EB1D928D0D91E00E567FE /* StaticTable */,
 				344A19DF28C89B5900EFC8B6 /* AppDelegate.swift */,
 				344A19E128C89B5900EFC8B6 /* SceneDelegate.swift */,
 				348862C628CE00730062F4B3 /* PlaceModel.swift */,
@@ -76,6 +83,16 @@
 				344A19ED28C89B5B00EFC8B6 /* Info.plist */,
 			);
 			path = BestPlaces;
+			sourceTree = "<group>";
+		};
+		344EB1D928D0D91E00E567FE /* StaticTable */ = {
+			isa = PBXGroup;
+			children = (
+				344D837028D036A100F71E79 /* AddViewController.swift */,
+				344EB1D728D0D8EE00E567FE /* AddImageCell.swift */,
+				344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */,
+			);
+			path = StaticTable;
 			sourceTree = "<group>";
 		};
 		348862CE28CF19D40062F4B3 /* Controllers */ = {
@@ -159,10 +176,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				348862C928CEE2BA0062F4B3 /* AddPlaceViewController.swift in Sources */,
+				344EB1DB28D0D94D00E567FE /* AddInfoCell.swift in Sources */,
 				344A19E428C89B5900EFC8B6 /* ViewController.swift in Sources */,
+				344D837128D036A100F71E79 /* AddViewController.swift in Sources */,
 				344A19E028C89B5900EFC8B6 /* AppDelegate.swift in Sources */,
 				348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */,
 				348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */,
+				344EB1D828D0D8EE00E567FE /* AddImageCell.swift in Sources */,
 				344A19E228C89B5900EFC8B6 /* SceneDelegate.swift in Sources */,
 				344A19F428C89BB500EFC8B6 /* PlaceCell.swift in Sources */,
 			);

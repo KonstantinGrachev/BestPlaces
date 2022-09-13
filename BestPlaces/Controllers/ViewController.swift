@@ -35,7 +35,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction private func addButtonTapped() {
-        let addPlaceController = AddPlaceViewController()
+        let addPlaceController = AddViewController()
         navigationController?.pushViewController(addPlaceController, animated: true)
     }
 }
