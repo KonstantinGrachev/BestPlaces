@@ -3,7 +3,14 @@
 import Foundation
 import UIKit
 
-class AddInfoCell: UITableViewCell, UITextFieldDelegate {
+class AddInfoCell: UITableViewCell {
+    
+    enum Constants {
+        enum Constraints {
+            static let sideIndentation: CGFloat = 14
+        }
+    }
+    
     static let cellID = "AddInfoCell"
     
     static let labelsText = ["Name",
@@ -18,13 +25,15 @@ class AddInfoCell: UITableViewCell, UITextFieldDelegate {
     let cellLabel: UILabel = {
        let label = UILabel()
        label.translatesAutoresizingMaskIntoConstraints = false
-       label.font = .boldSystemFont(ofSize: 16)
+        label.font = .italicSystemFont(ofSize: 20)
        return label
    }()
 
     let cellTextField: UITextField = {
        let textField = UITextField()
-       textField.borderStyle = .roundedRect
+        textField.font = .systemFont(ofSize: 18)
+        textField.borderStyle = .roundedRect
+        textField.autocapitalizationType = .sentences
        textField.returnKeyType = .done
         textField.translatesAutoresizingMaskIntoConstraints = false
        return textField
@@ -33,7 +42,7 @@ class AddInfoCell: UITableViewCell, UITextFieldDelegate {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .brown
+        contentView.backgroundColor = MainConstants.tableViewBackgroundColor
         contentView.addSubview(cellLabel)
         contentView.addSubview(cellTextField)
         setConstraints()
@@ -49,22 +58,17 @@ class AddInfoCell: UITableViewCell, UITextFieldDelegate {
     }
     
     private func setConstraints() {
+        
         NSLayoutConstraint.activate([
-            cellTextField.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            cellTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            cellTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
-
+            cellLabel.topAnchor.constraint(equalTo: topAnchor, constant: Constants.Constraints.sideIndentation),
+            cellLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.Constraints.sideIndentation),
+            cellLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.Constraints.sideIndentation)
+        ])
+        
+        NSLayoutConstraint.activate([
+            cellTextField.topAnchor.constraint(equalTo: cellLabel.bottomAnchor, constant: Constants.Constraints.sideIndentation),
+            cellTextField.widthAnchor.constraint(equalTo: cellLabel.widthAnchor),
+            cellTextField.centerXAnchor.constraint(equalTo: cellLabel.centerXAnchor)
         ])
     }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        hideKeyboard()
-        return true
-    }
-    
-    func hideKeyboard() {
-        cellTextField.resignFirstResponder()
-    }
-    
-    
 }

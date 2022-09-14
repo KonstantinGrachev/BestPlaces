@@ -8,6 +8,8 @@ class ViewController: UIViewController {
     
     private let placesTableView: UITableView = {
         let tableView = UITableView()
+        tableView.separatorInset.left = MainConstants.sideIndentation
+        tableView.separatorInset.right = MainConstants.sideIndentation
         tableView.backgroundColor = .secondarySystemBackground
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
