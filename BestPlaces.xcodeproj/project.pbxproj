@@ -18,8 +18,8 @@
 		344EB1D828D0D8EE00E567FE /* AddImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EB1D728D0D8EE00E567FE /* AddImageCell.swift */; };
 		344EB1DB28D0D94D00E567FE /* AddInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */; };
 		344EB1DD28D10F0C00E567FE /* MainConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344EB1DC28D10F0C00E567FE /* MainConstants.swift */; };
+		347AA17E28D32AD000CE1DA6 /* UIViewController+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347AA17D28D32AD000CE1DA6 /* UIViewController+extensions.swift */; };
 		348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C628CE00730062F4B3 /* PlaceModel.swift */; };
-		348862C928CEE2BA0062F4B3 /* AddPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */; };
 		348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,8 +37,8 @@
 		344EB1D728D0D8EE00E567FE /* AddImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddImageCell.swift; sourceTree = "<group>"; };
 		344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInfoCell.swift; sourceTree = "<group>"; };
 		344EB1DC28D10F0C00E567FE /* MainConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainConstants.swift; sourceTree = "<group>"; };
+		347AA17D28D32AD000CE1DA6 /* UIViewController+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+extensions.swift"; sourceTree = "<group>"; };
 		348862C628CE00730062F4B3 /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
-		348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlaceViewController.swift; sourceTree = "<group>"; };
 		348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,13 +72,12 @@
 		344A19DE28C89B5900EFC8B6 /* BestPlaces */ = {
 			isa = PBXGroup;
 			children = (
+				347AA18328D32B9800CE1DA6 /* Applications */,
+				347AA17F28D32B2000CE1DA6 /* Constants */,
 				348862CE28CF19D40062F4B3 /* Controllers */,
-				348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */,
-				344EB1D928D0D91E00E567FE /* StaticTable */,
-				344A19DF28C89B5900EFC8B6 /* AppDelegate.swift */,
-				344A19E128C89B5900EFC8B6 /* SceneDelegate.swift */,
-				348862C628CE00730062F4B3 /* PlaceModel.swift */,
-				344A19F328C89BB500EFC8B6 /* PlaceCell.swift */,
+				347AA18028D32B5600CE1DA6 /* Extensions */,
+				347AA18228D32B8C00CE1DA6 /* Cells */,
+				347AA18128D32B7A00CE1DA6 /* Model */,
 				344A19E528C89B5900EFC8B6 /* Main.storyboard */,
 				344A19E828C89B5B00EFC8B6 /* Assets.xcassets */,
 				344A19EA28C89B5B00EFC8B6 /* LaunchScreen.storyboard */,
@@ -87,22 +86,63 @@
 			path = BestPlaces;
 			sourceTree = "<group>";
 		};
-		344EB1D928D0D91E00E567FE /* StaticTable */ = {
+		344EB1D928D0D91E00E567FE /* AddStaticTableCell */ = {
 			isa = PBXGroup;
 			children = (
-				344D837028D036A100F71E79 /* AddViewController.swift */,
 				344EB1D728D0D8EE00E567FE /* AddImageCell.swift */,
 				344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */,
 			);
-			path = StaticTable;
+			path = AddStaticTableCell;
+			sourceTree = "<group>";
+		};
+		347AA17F28D32B2000CE1DA6 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				344EB1DC28D10F0C00E567FE /* MainConstants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		347AA18028D32B5600CE1DA6 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */,
+				347AA17D28D32AD000CE1DA6 /* UIViewController+extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		347AA18128D32B7A00CE1DA6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				348862C628CE00730062F4B3 /* PlaceModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		347AA18228D32B8C00CE1DA6 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				344EB1D928D0D91E00E567FE /* AddStaticTableCell */,
+				344A19F328C89BB500EFC8B6 /* PlaceCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		347AA18328D32B9800CE1DA6 /* Applications */ = {
+			isa = PBXGroup;
+			children = (
+				344A19DF28C89B5900EFC8B6 /* AppDelegate.swift */,
+				344A19E128C89B5900EFC8B6 /* SceneDelegate.swift */,
+			);
+			path = Applications;
 			sourceTree = "<group>";
 		};
 		348862CE28CF19D40062F4B3 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				348862C828CEE2BA0062F4B3 /* AddPlaceViewController.swift */,
-				344EB1DC28D10F0C00E567FE /* MainConstants.swift */,
 				344A19E328C89B5900EFC8B6 /* ViewController.swift */,
+				344D837028D036A100F71E79 /* AddViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -178,11 +218,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				348862C928CEE2BA0062F4B3 /* AddPlaceViewController.swift in Sources */,
 				344EB1DB28D0D94D00E567FE /* AddInfoCell.swift in Sources */,
 				344A19E428C89B5900EFC8B6 /* ViewController.swift in Sources */,
 				344D837128D036A100F71E79 /* AddViewController.swift in Sources */,
 				344A19E028C89B5900EFC8B6 /* AppDelegate.swift in Sources */,
+				347AA17E28D32AD000CE1DA6 /* UIViewController+extensions.swift in Sources */,
 				348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */,
 				348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */,
 				344EB1D828D0D8EE00E567FE /* AddImageCell.swift in Sources */,

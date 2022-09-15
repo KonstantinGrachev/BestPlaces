@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  BestPlaces
-//
-//  Created by Konstantin Gracheff on 07.09.2022.
-//
-
 import UIKit
 
 @main

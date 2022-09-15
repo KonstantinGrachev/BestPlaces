@@ -1,4 +1,3 @@
-import Foundation
 import UIKit
 
 class PlaceCell: UITableViewCell {
@@ -41,13 +40,12 @@ class PlaceCell: UITableViewCell {
     
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = Constants.Constraints.cornerRadiusImageView
+        imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
-    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -71,7 +69,14 @@ class PlaceCell: UITableViewCell {
         nameLabel.text = model.name
         locationLabel.text = model.location
         typeLabel.text = model.type
-        placeImageView.image = UIImage(named: model.image)
+        placeImageView.image = model.image
+        
+        if model.image == UIImage(named: "loadPhoto") {
+            placeImageView.image = UIImage(named: "plainPlace")
+        }
+        
+        guard let name = model.imageName else { return }
+        placeImageView.image = UIImage(named: name)
     }
 }
 

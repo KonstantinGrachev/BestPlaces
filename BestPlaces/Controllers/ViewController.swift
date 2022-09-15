@@ -2,10 +2,14 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    //MARK: - constants
+
     enum Constants {
         static let heightForRow: CGFloat = 85
     }
     
+    //MARK: - UI objects
+
     private let placesTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorInset.left = MainConstants.sideIndentation
@@ -17,6 +21,8 @@ class ViewController: UIViewController {
         
     private var places = PlaceModel.generatePlaces()
     
+    //MARK: - viewDidLoad
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -36,11 +42,17 @@ class ViewController: UIViewController {
         placesTableView.register(PlaceCell.self, forCellReuseIdentifier: PlaceCell.placeCellId)
     }
     
+    //MARK: - @IBActions
+
     @IBAction private func addButtonTapped() {
         let addPlaceController = AddViewController()
+        addPlaceController.delegate = self
         navigationController?.pushViewController(addPlaceController, animated: true)
     }
 }
+
+//MARK: - table view
+
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -58,6 +70,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+//MARK: - constraints
+
 extension ViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
@@ -69,3 +83,14 @@ extension ViewController {
     }
 }
 
+//MARK: - delegate AddViewController
+
+extension ViewController: AddViewControllerDelegate {
+    func addNewPlaceInModel(newPlace: PlaceModel?) {
+        guard let newPlace = newPlace else {
+            return
+        }
+        places.append(newPlace)
+        placesTableView.reloadData()
+    }
+}

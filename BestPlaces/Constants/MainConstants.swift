@@ -1,5 +1,5 @@
-import Foundation
 import UIKit
+
 enum MainConstants {
     static let tableViewBackgroundColor: UIColor = .secondarySystemBackground
     

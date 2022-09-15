@@ -1,12 +1,5 @@
-//
-//  AddCell.swift
-//  BestPlaces
-//
-//  Created by Konstantin Gracheff on 13.09.2022.
-//
-
-import Foundation
 import UIKit
+
 class AddImageCell: UITableViewCell {
     
     enum Constants {
