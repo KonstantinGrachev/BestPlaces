@@ -73,7 +73,7 @@ class AddViewController: UIViewController {
     @objc override func handlePickedImage(_ image: UIImage) {
         guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
         cell.cellImageView.image = image
-        newPlace?.image = image
+//        newPlace?.image = image
         cell.cellImageView.contentMode = .scaleAspectFill
     }
     
@@ -88,7 +88,7 @@ class AddViewController: UIViewController {
         saveNewPlaceModel()
     }
     
-    //MARK: - all funcs
+    //MARK: - save model
     
     private func saveNewPlaceModel() {
         guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
@@ -103,7 +103,10 @@ class AddViewController: UIViewController {
         guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? AddInfoCell else { return }
         let type = typeCell.cellTextField.text
         
-        newPlace = PlaceModel(name: name, location: location, type: type, image: image)
+//        newPlace = PlaceModel(name: name, location: location, type: type, image: image)
+        newPlace = PlaceModel()
+        newPlace?.savePlaces()
+        StorageManager.addNewPlaces(newPlace)
         
         delegate?.addNewPlaceInModel(newPlace: newPlace)
     }

@@ -1,4 +1,5 @@
 import UIKit
+import RealmSwift
 
 class ViewController: UIViewController {
     
@@ -19,7 +20,7 @@ class ViewController: UIViewController {
         return tableView
     }()
         
-    private var places = PlaceModel.generatePlaces()
+//    private var places = PlaceModel.generatePlaces()
     
     //MARK: - viewDidLoad
 
@@ -28,6 +29,7 @@ class ViewController: UIViewController {
         setupViews()
         setDelegates()
         setConstraints()
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
     }
     
     private func setupViews() {
@@ -56,7 +58,8 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        places.count
+//        places.count
+        0
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -65,7 +68,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = placesTableView.dequeueReusableCell(withIdentifier: PlaceCell.placeCellId, for: indexPath) as? PlaceCell else { return UITableViewCell() }
-        cell.configure(model: places[indexPath.row])
+//        cell.configure(model: places[indexPath.row])
         return cell
     }
 }
@@ -90,7 +93,7 @@ extension ViewController: AddViewControllerDelegate {
         guard let newPlace = newPlace else {
             return
         }
-        places.append(newPlace)
+//        places.append(newPlace)
         placesTableView.reloadData()
     }
 }

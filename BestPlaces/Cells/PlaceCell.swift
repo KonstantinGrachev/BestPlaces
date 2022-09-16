@@ -69,14 +69,14 @@ class PlaceCell: UITableViewCell {
         nameLabel.text = model.name
         locationLabel.text = model.location
         typeLabel.text = model.type
-        placeImageView.image = model.image
-        
-        if model.image == UIImage(named: "loadPhoto") {
-            placeImageView.image = UIImage(named: "plainPlace")
-        }
-        
-        guard let name = model.imageName else { return }
-        placeImageView.image = UIImage(named: name)
+//        placeImageView.image = model.image
+//        
+//        if model.image == UIImage(named: "loadPhoto") {
+//            placeImageView.image = UIImage(named: "plainPlace")
+//        }
+//        
+//        guard let name = model.imageName else { return }
+//        placeImageView.image = UIImage(named: name)
     }
 }
 
