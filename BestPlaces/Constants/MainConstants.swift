@@ -4,6 +4,6 @@ enum MainConstants {
     static let tableViewBackgroundColor: UIColor = .secondarySystemBackground
     
     static let sideIndentation: CGFloat = 14
-    
+    static let plainPlaceImage = UIImage(named: "plainPlace")
     
 }

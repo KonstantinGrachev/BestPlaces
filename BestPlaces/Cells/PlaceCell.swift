@@ -40,6 +40,7 @@ class PlaceCell: UITableViewCell {
     
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "plainPlace")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = Constants.Constraints.cornerRadiusImageView
         imageView.clipsToBounds = true
@@ -66,17 +67,14 @@ class PlaceCell: UITableViewCell {
     }
     
     func configure(model: PlaceModel) {
+        
+        
         nameLabel.text = model.name
         locationLabel.text = model.location
         typeLabel.text = model.type
-//        placeImageView.image = model.image
-//        
-//        if model.image == UIImage(named: "loadPhoto") {
-//            placeImageView.image = UIImage(named: "plainPlace")
-//        }
-//        
-//        guard let name = model.imageName else { return }
-//        placeImageView.image = UIImage(named: name)
+        
+        guard let imageData = model.imageData else { return }
+        placeImageView.image = UIImage(data: imageData)
     }
 }
 

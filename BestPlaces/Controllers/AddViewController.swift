@@ -7,10 +7,12 @@ protocol AddViewControllerDelegate: AnyObject {
 class AddViewController: UIViewController {
     
     weak var delegate: AddViewControllerDelegate?
-        
+    
+    var currentPlace: PlaceModel?
+    
     //MARK: - UI objects
     
-    private var tableView: UITableView = {
+    let tableView: UITableView = {
         let tableView =  UITableView()
         tableView.separatorStyle = .none
         tableView.bounces = false
@@ -19,10 +21,9 @@ class AddViewController: UIViewController {
         return tableView
     }()
     
+    private var imageIsChange = false
     private var bottomAnchorScrollViewConstraint: NSLayoutConstraint?
-    
-    private var newPlace: PlaceModel?
-    
+        
     //MARK: - viewDidLoad
     
      override func viewDidLoad() {
@@ -33,11 +34,10 @@ class AddViewController: UIViewController {
          registerCell()
          registerForKeyboardNotifications()
          setConstraints()
-         
+         setupCurrentData()
     }
     
     //MARK: - settings view controller
-
     
     private func setNavigationController() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel",
@@ -73,8 +73,8 @@ class AddViewController: UIViewController {
     @objc override func handlePickedImage(_ image: UIImage) {
         guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
         cell.cellImageView.image = image
-//        newPlace?.image = image
         cell.cellImageView.contentMode = .scaleAspectFill
+        imageIsChange = true
     }
     
     //MARK: - navigation buttons
@@ -92,7 +92,13 @@ class AddViewController: UIViewController {
     
     private func saveNewPlaceModel() {
         guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
-        let image = imageCell.cellImageView.image
+        var image: UIImage?
+        if imageIsChange {
+            image = imageCell.cellImageView.image
+        } else {
+            image = MainConstants.plainPlaceImage
+        }
+        let imageData = image?.pngData()
         
         guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
         guard let name = nameCell.cellTextField.text else { return }
@@ -103,14 +109,35 @@ class AddViewController: UIViewController {
         guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? AddInfoCell else { return }
         let type = typeCell.cellTextField.text
         
-//        newPlace = PlaceModel(name: name, location: location, type: type, image: image)
-        newPlace = PlaceModel()
-        newPlace?.savePlaces()
+        let newPlace = PlaceModel.init(name: name,
+                                       location: location,
+                                       type: type,
+                                       imageData: imageData)
+
         StorageManager.addNewPlaces(newPlace)
         
         delegate?.addNewPlaceInModel(newPlace: newPlace)
     }
     
+    //MARK: - transfer data
+    private func setupCurrentData() {
+        if currentPlace != nil {
+            guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
+            guard let imageData = currentPlace?.imageData else { return }
+            let image = UIImage(data: imageData)
+            imageCell.imageView?.image = image
+                    
+            guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
+            nameCell.cellTextField.text = currentPlace?.name
+            
+            guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? AddInfoCell else { return }
+            locationCell.cellTextField.text = currentPlace?.location
+            
+            guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? AddInfoCell else { return }
+            typeCell.cellTextField.text = currentPlace?.type
+            tableView.reloadData()
+        }
+    }
 }
 
 //MARK: - table view

@@ -4,23 +4,13 @@ class PlaceModel: Object {
     @objc dynamic var name = ""
     @objc dynamic var location: String?
     @objc dynamic var type: String?
-    @objc dynamic var image: Data?
+    @objc dynamic var imageData: Data?
     
-    var placesArray = ["First", "Second", "Third"]
-
-    func savePlaces() {
-        
-        placesArray.forEach {
-            let newPlace = PlaceModel()
-            
-            guard let image = UIImage(named: $0) else { return }
-            let imageData = image.pngData()
-            
-            newPlace.name = $0
-            newPlace.location = "Msk"
-            newPlace.type = "Bar"
-            newPlace.image = imageData
-        }
+    convenience init(name: String, location: String?, type: String?, imageData: Data?) {
+        self.init()
+        self.name = name
+        self.location = location
+        self.type = type
+        self.imageData = imageData
     }
-    
 }

@@ -20,8 +20,8 @@ class ViewController: UIViewController {
         return tableView
     }()
         
-//    private var places = PlaceModel.generatePlaces()
-    
+    var places: Results<PlaceModel>! = realm.objects(PlaceModel.self)
+
     //MARK: - viewDidLoad
 
     override func viewDidLoad() {
@@ -29,7 +29,8 @@ class ViewController: UIViewController {
         setupViews()
         setDelegates()
         setConstraints()
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
+//        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        
     }
     
     private func setupViews() {
@@ -58,8 +59,7 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        places.count
-        0
+        places == nil ? 0 : places.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -68,8 +68,25 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = placesTableView.dequeueReusableCell(withIdentifier: PlaceCell.placeCellId, for: indexPath) as? PlaceCell else { return UITableViewCell() }
-//        cell.configure(model: places[indexPath.row])
+        cell.configure(model: places[indexPath.row])
         return cell
+    }
+    
+    //MARK: Delete cell
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let place = places[indexPath.row]
+        let testAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, _) in
+            StorageManager.deletePlace(place)
+            tableView.deleteRows(at: [indexPath], with: .none)
+        }
+        return UISwipeActionsConfiguration(actions: [testAction])
+    }
+    
+    //TODO: Show details and editing place
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let addNewPlaceViewController = AddViewController()
+        addNewPlaceViewController.currentPlace = places[indexPath.row]
+        navigationController?.pushViewController(addNewPlaceViewController, animated: true)
     }
 }
 
@@ -90,10 +107,6 @@ extension ViewController {
 
 extension ViewController: AddViewControllerDelegate {
     func addNewPlaceInModel(newPlace: PlaceModel?) {
-        guard let newPlace = newPlace else {
-            return
-        }
-//        places.append(newPlace)
         placesTableView.reloadData()
     }
 }
