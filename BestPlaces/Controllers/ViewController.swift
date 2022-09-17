@@ -1,11 +1,8 @@
 import UIKit
 import RealmSwift
-//test
+
 class ViewController: UIViewController {
     
-    private func settt() {
-        
-    }
     //MARK: - constants
 
     enum Constants {
