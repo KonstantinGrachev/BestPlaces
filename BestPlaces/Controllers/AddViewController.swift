@@ -143,6 +143,7 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.row == 0 {
             guard let imageCell = tableView.dequeueReusableCell(withIdentifier: AddImageCell.cellID, for: indexPath) as? AddImageCell else { return UITableViewCell() }
             transferCurrentPlaceImage(imageCell: imageCell)
+            imageCell.cellImageView.contentMode = .scaleAspectFill
             return imageCell
             
         } else {

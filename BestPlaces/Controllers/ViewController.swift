@@ -4,13 +4,26 @@ import RealmSwift
 class ViewController: UIViewController {
     
     //MARK: - constants
-
+    
     enum Constants {
         static let heightForRow: CGFloat = 85
     }
     
+    private var places: Results<PlaceModel>! = realm.objects(PlaceModel.self)
+    private var filteredPlaces: Results<PlaceModel>!
+    private var isSortedAscending = true
+    private var searchBarIsEmpty: Bool {
+        guard let text = searchController.searchBar.text else { return false }
+        return text.isEmpty
+    }
+    private var isFiltering: Bool {
+        return searchController.isActive && !searchBarIsEmpty
+    }
+    
     //MARK: - UI objects
-
+    
+    private let searchController = UISearchController(searchResultsController: nil)
+    
     private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["Date", "Name"])
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
@@ -19,6 +32,7 @@ class ViewController: UIViewController {
         segmentedControl.selectedSegmentIndex = 0
         return segmentedControl
     }()
+    
     private let placesTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorInset.left = MainConstants.sideIndentation
@@ -27,29 +41,32 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-        
-    private var places: Results<PlaceModel>! = realm.objects(PlaceModel.self)
-    private var isSortedAscending = true
-
+    
     //MARK: - viewDidLoad
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationController()
         setupViews()
         setDelegates()
+        setupSearchController()
         setConstraints()
-//        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        //        print(Realm.Configuration.defaultConfiguration.fileURL!)
         
     }
     
+    //MARK: - setup view controller
+    
     private func setupViews() {
-        navigationItem.title = "Best Places"
-        navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.up.arrow.down.square"), style: .plain, target: self, action: #selector(sortButtonTapped))
-        
         view.backgroundColor = .secondarySystemBackground
         view.addSubview(segmentedControl)
         view.addSubview(placesTableView)
+    }
+    
+    private func setupNavigationController() {
+        navigationItem.title = "Best Places"
+        navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.up.arrow.down.square"), style: .plain, target: self, action: #selector(sortButtonTapped))
     }
     
     private func setDelegates() {
@@ -58,8 +75,17 @@ class ViewController: UIViewController {
         placesTableView.register(PlaceCell.self, forCellReuseIdentifier: PlaceCell.placeCellId)
     }
     
+    private func setupSearchController() {
+        searchController.delegate = self
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search"
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
+    
     //MARK: - @IBActions
-
+    
     @IBAction private func addButtonTapped() {
         let addPlaceController = AddViewController()
         addPlaceController.delegate = self
@@ -83,7 +109,7 @@ class ViewController: UIViewController {
             places = places.sorted(byKeyPath: "date", ascending: isSortedAscending)
         } else {
             places = places.sorted(byKeyPath: "name", ascending: isSortedAscending)
-
+            
         }
         placesTableView.reloadData()
     }
@@ -91,10 +117,13 @@ class ViewController: UIViewController {
 
 //MARK: - table view
 
-
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        places == nil ? 0 : places.count
+        if isFiltering {
+            return filteredPlaces.count
+        }
+        return places == nil ? 0 : places.count
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -103,13 +132,24 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = placesTableView.dequeueReusableCell(withIdentifier: PlaceCell.placeCellId, for: indexPath) as? PlaceCell else { return UITableViewCell() }
-        cell.configure(model: places[indexPath.row])
+        
+        if isFiltering {
+            cell.configure(model: filteredPlaces[indexPath.row])
+        } else {
+            cell.configure(model: places[indexPath.row])
+        }
+        
+        
         return cell
     }
     
     //MARK: Delete cell
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let place = places[indexPath.row]
+        
+        var place = places[indexPath.row]
+        if isFiltering {
+            place = filteredPlaces[indexPath.row]
+        }
         let testAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, _) in
             StorageManager.deletePlace(place)
             tableView.deleteRows(at: [indexPath], with: .none)
@@ -117,10 +157,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         return UISwipeActionsConfiguration(actions: [testAction])
     }
     
-    //TODO: Show details and editing place
+    //MARK: - Show details and editing place
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let addNewPlaceViewController = AddViewController()
         addNewPlaceViewController.currentPlace = places[indexPath.row]
+        if isFiltering {
+            addNewPlaceViewController.currentPlace = filteredPlaces[indexPath.row]
+        }
+        
         addNewPlaceViewController.delegate = self
         navigationController?.pushViewController(addNewPlaceViewController, animated: true)
     }
@@ -150,5 +194,19 @@ extension ViewController {
 extension ViewController: AddViewControllerDelegate {
     func addNewPlaceInModel(newPlace: PlaceModel?) {
         placesTableView.reloadData()
+    }
+}
+
+//MARK: - delegate search controller
+extension ViewController: UISearchControllerDelegate, UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else { return }
+        filterContentForSearchText(text)
+    }
+    
+    private func filterContentForSearchText(_ searchText: String) {
+        filteredPlaces = places.filter("name CONTAINS[c] %@ OR location CONTAINS[c] %@", searchText, searchText)
+        placesTableView.reloadData()
+
     }
 }
