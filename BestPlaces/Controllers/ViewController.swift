@@ -11,6 +11,14 @@ class ViewController: UIViewController {
     
     //MARK: - UI objects
 
+    private lazy var segmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: ["Date", "Name"])
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        segmentedControl.backgroundColor = .secondarySystemBackground
+        segmentedControl.selectedSegmentIndex = 0
+        return segmentedControl
+    }()
     private let placesTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorInset.left = MainConstants.sideIndentation
@@ -20,7 +28,8 @@ class ViewController: UIViewController {
         return tableView
     }()
         
-    var places: Results<PlaceModel>! = realm.objects(PlaceModel.self)
+    private var places: Results<PlaceModel>! = realm.objects(PlaceModel.self)
+    private var isSortedAscending = true
 
     //MARK: - viewDidLoad
 
@@ -29,13 +38,17 @@ class ViewController: UIViewController {
         setupViews()
         setDelegates()
         setConstraints()
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
+//        print(Realm.Configuration.defaultConfiguration.fileURL!)
         
     }
     
     private func setupViews() {
         navigationItem.title = "Best Places"
         navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.up.arrow.down.square"), style: .plain, target: self, action: #selector(sortButtonTapped))
+        
+        view.backgroundColor = .secondarySystemBackground
+        view.addSubview(segmentedControl)
         view.addSubview(placesTableView)
     }
     
@@ -51,6 +64,28 @@ class ViewController: UIViewController {
         let addPlaceController = AddViewController()
         addPlaceController.delegate = self
         navigationController?.pushViewController(addPlaceController, animated: true)
+    }
+    
+    @IBAction private func sortButtonTapped() {
+        
+        isSortedAscending.toggle()
+        
+        if isSortedAscending {
+            navigationItem.leftBarButtonItem?.image = UIImage(systemName: "arrow.up.arrow.down.square")
+        } else {
+            navigationItem.leftBarButtonItem?.image = UIImage(systemName: "arrow.up.arrow.down.square.fill")
+        }
+        segmentedControlChanged()
+    }
+    
+    @IBAction private func segmentedControlChanged() {
+        if segmentedControl.selectedSegmentIndex == 0 {
+            places = places.sorted(byKeyPath: "date", ascending: isSortedAscending)
+        } else {
+            places = places.sorted(byKeyPath: "name", ascending: isSortedAscending)
+
+        }
+        placesTableView.reloadData()
     }
 }
 
@@ -95,8 +130,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension ViewController {
     private func setConstraints() {
+        
         NSLayoutConstraint.activate([
-            placesTableView.topAnchor.constraint(equalTo: view.topAnchor),
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        NSLayoutConstraint.activate([
+            placesTableView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
             placesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             placesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             placesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
