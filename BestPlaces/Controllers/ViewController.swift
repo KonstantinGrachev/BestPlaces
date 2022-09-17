@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         setupViews()
         setDelegates()
         setConstraints()
-//        print(Realm.Configuration.defaultConfiguration.fileURL!)
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
         
     }
     
@@ -86,6 +86,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let addNewPlaceViewController = AddViewController()
         addNewPlaceViewController.currentPlace = places[indexPath.row]
+        addNewPlaceViewController.delegate = self
         navigationController?.pushViewController(addNewPlaceViewController, animated: true)
     }
 }

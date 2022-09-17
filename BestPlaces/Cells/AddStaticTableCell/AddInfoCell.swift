@@ -49,9 +49,14 @@ class AddInfoCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(label: String, placeHolder: String) {
+    func configure(label: String, placeHolder: String?) {
         cellLabel.text = label
         cellTextField.placeholder = placeHolder
+    }
+    
+    func configure(label: String, text: String?) {
+        cellLabel.text = label
+        cellTextField.text = text
     }
     
     private func setConstraints() {

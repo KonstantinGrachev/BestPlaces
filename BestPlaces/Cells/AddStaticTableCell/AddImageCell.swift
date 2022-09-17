@@ -30,7 +30,7 @@ class AddImageCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(image: UIImage) {
+    func configureCell(image: UIImage?) {
         cellImageView.image = image
     }
     

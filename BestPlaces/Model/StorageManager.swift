@@ -4,6 +4,7 @@ let realm = try! Realm()
 
 class StorageManager {
     
+    //MARK: - add new place
     static func addNewPlaces(_ place: PlaceModel?) {
         do {
             try realm.write({
@@ -17,6 +18,7 @@ class StorageManager {
         }
     }
     
+    //MARK: - delete place
     static func deletePlace(_ place: PlaceModel?) {
         do {
             try realm.write({

@@ -34,7 +34,6 @@ class AddViewController: UIViewController {
          registerCell()
          registerForKeyboardNotifications()
          setConstraints()
-         setupCurrentData()
     }
     
     //MARK: - settings view controller
@@ -85,12 +84,12 @@ class AddViewController: UIViewController {
     
     @objc private func saveButtonTapped() {
         navigationController?.popToRootViewController(animated: true)
-        saveNewPlaceModel()
+        savePlaceModel()
     }
     
     //MARK: - save model
     
-    private func saveNewPlaceModel() {
+    private func savePlaceModel() {
         guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
         var image: UIImage?
         if imageIsChange {
@@ -113,30 +112,23 @@ class AddViewController: UIViewController {
                                        location: location,
                                        type: type,
                                        imageData: imageData)
-
-        StorageManager.addNewPlaces(newPlace)
         
-        delegate?.addNewPlaceInModel(newPlace: newPlace)
-    }
-    
-    //MARK: - transfer data
-    private func setupCurrentData() {
         if currentPlace != nil {
-            guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
-            guard let imageData = currentPlace?.imageData else { return }
-            let image = UIImage(data: imageData)
-            imageCell.imageView?.image = image
-                    
-            guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
-            nameCell.cellTextField.text = currentPlace?.name
+            try! realm.write({
+                currentPlace?.name = name
+                currentPlace?.location = location
+                currentPlace?.type = type
+                currentPlace?.imageData = imageData
+                
+                delegate?.addNewPlaceInModel(newPlace: currentPlace)
+            })
             
-            guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? AddInfoCell else { return }
-            locationCell.cellTextField.text = currentPlace?.location
-            
-            guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? AddInfoCell else { return }
-            typeCell.cellTextField.text = currentPlace?.type
-            tableView.reloadData()
+        } else {
+            StorageManager.addNewPlaces(newPlace)
+            delegate?.addNewPlaceInModel(newPlace: newPlace)
         }
+        
+        
     }
 }
 
@@ -148,19 +140,61 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if indexPath.row == 0 {
-            guard let cellImage = tableView.dequeueReusableCell(withIdentifier: AddImageCell.cellID, for: indexPath) as? AddImageCell else { return UITableViewCell() }
-            
-            return cellImage
+            guard let imageCell = tableView.dequeueReusableCell(withIdentifier: AddImageCell.cellID, for: indexPath) as? AddImageCell else { return UITableViewCell() }
+            transferCurrentPlaceImage(imageCell: imageCell)
+            return imageCell
             
         } else {
             let row = indexPath.row - 1
-            guard let cellInfo = tableView.dequeueReusableCell(withIdentifier: AddInfoCell.cellID, for: indexPath) as? AddInfoCell else { return UITableViewCell() }
-            cellInfo.configure(label: AddInfoCell.labelsText[row], placeHolder: AddInfoCell.placeHoldersText[row])
-            cellInfo.cellTextField.delegate = self
+            guard let infoCell = tableView.dequeueReusableCell(withIdentifier: AddInfoCell.cellID, for: indexPath) as? AddInfoCell else { return UITableViewCell() }
+            infoCell.cellTextField.delegate = self
+            transferCurrentPlaceData(infoCell: infoCell, row: row)
+            return infoCell
+        }
+    }
+    
+    //MARK: if controller open for editing
+    func transferCurrentPlaceData(infoCell: AddInfoCell, row: Int) {
+        if currentPlace != nil {
+
+            imageIsChange = true
+            navigationItem.rightBarButtonItem?.isEnabled = true
             
-            return cellInfo
+            let textLabel = AddInfoCell.labelsText[row]
+            let defaultTextPlaceholder = AddInfoCell.placeHoldersText[row]
+            
+            let name = currentPlace?.name
+            let location = currentPlace?.location
+            let type = currentPlace?.type
+            
+            switch row {
+            case 0:
+                infoCell.configure(label: textLabel, text: name)
+            case 1:
+                if location != "" {
+                    infoCell.configure(label: textLabel, text: location)
+                } else {
+                    infoCell.configure(label: textLabel, placeHolder: defaultTextPlaceholder)
+                }
+            case 2:
+                if type != "" {
+                    infoCell.configure(label: textLabel, text: type)
+                } else {
+                    infoCell.configure(label: textLabel, placeHolder: defaultTextPlaceholder)
+                }
+            default: break
+            }
+        } else {
+            infoCell.configure(label: AddInfoCell.labelsText[row], placeHolder: AddInfoCell.placeHoldersText[row])
+        }
+    }
+    
+    func transferCurrentPlaceImage(imageCell: AddImageCell) {
+        if currentPlace != nil {
+            guard let imageData = currentPlace?.imageData else { return }
+            let image = UIImage(data: imageData)
+            imageCell.configureCell(image: image)
         }
     }
     
