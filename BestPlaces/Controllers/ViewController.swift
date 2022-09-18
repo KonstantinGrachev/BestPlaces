@@ -139,7 +139,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             cell.configure(model: places[indexPath.row])
         }
         
-        
         return cell
     }
     
@@ -159,6 +158,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - Show details and editing place
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         let addNewPlaceViewController = AddViewController()
         addNewPlaceViewController.currentPlace = places[indexPath.row]
         if isFiltering {

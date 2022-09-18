@@ -22,6 +22,7 @@
 		347AA18528D3B8C300CE1DA6 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347AA18428D3B8C300CE1DA6 /* StorageManager.swift */; };
 		348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C628CE00730062F4B3 /* PlaceModel.swift */; };
 		348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */; };
+		44C0627F28D6E66D007A3316 /* CustomRatingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C0627E28D6E66D007A3316 /* CustomRatingCell.swift */; };
 		A04342E215E7F7052AFA35A9 /* Pods_BestPlaces.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5928F4A8FFD2BF7765E53B /* Pods_BestPlaces.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +44,7 @@
 		347AA18428D3B8C300CE1DA6 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		348862C628CE00730062F4B3 /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
 		348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+extensions.swift"; sourceTree = "<group>"; };
+		44C0627E28D6E66D007A3316 /* CustomRatingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRatingCell.swift; sourceTree = "<group>"; };
 		5D5928F4A8FFD2BF7765E53B /* Pods_BestPlaces.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BestPlaces.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E1E21ED345B88A1B7B9E9D2 /* Pods-BestPlaces.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestPlaces.debug.xcconfig"; path = "Target Support Files/Pods-BestPlaces/Pods-BestPlaces.debug.xcconfig"; sourceTree = "<group>"; };
 		FC082E27BD207EFB19525E38 /* Pods-BestPlaces.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestPlaces.release.xcconfig"; path = "Target Support Files/Pods-BestPlaces/Pods-BestPlaces.release.xcconfig"; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			children = (
 				344EB1D728D0D8EE00E567FE /* AddImageCell.swift */,
 				344EB1DA28D0D94D00E567FE /* AddInfoCell.swift */,
+				44C0627E28D6E66D007A3316 /* CustomRatingCell.swift */,
 			);
 			path = AddStaticTableCell;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				344A19E228C89B5900EFC8B6 /* SceneDelegate.swift in Sources */,
 				344EB1DD28D10F0C00E567FE /* MainConstants.swift in Sources */,
 				344A19F428C89BB500EFC8B6 /* PlaceCell.swift in Sources */,
+				44C0627F28D6E66D007A3316 /* CustomRatingCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

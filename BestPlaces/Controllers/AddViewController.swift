@@ -60,6 +60,7 @@ class AddViewController: UIViewController {
     private func registerCell() {
         tableView.register(AddImageCell.self, forCellReuseIdentifier: AddImageCell.cellID)
         tableView.register(AddInfoCell.self, forCellReuseIdentifier: AddInfoCell.cellID)
+        tableView.register(CustomRatingCell.self, forCellReuseIdentifier: CustomRatingCell.cellID)
     }
     
     private func setupViews() {
@@ -108,10 +109,14 @@ class AddViewController: UIViewController {
         guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? AddInfoCell else { return }
         let type = typeCell.cellTextField.text
         
+        guard let ratingCell = tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? CustomRatingCell else { return }
+        let rating = ratingCell.rating
+        
         let newPlace = PlaceModel.init(name: name,
                                        location: location,
                                        type: type,
-                                       imageData: imageData)
+                                       imageData: imageData,
+                                       rating: rating)
         
         if currentPlace != nil {
             try! realm.write({
@@ -119,6 +124,7 @@ class AddViewController: UIViewController {
                 currentPlace?.location = location
                 currentPlace?.type = type
                 currentPlace?.imageData = imageData
+                currentPlace?.rating = rating
                 
                 delegate?.addNewPlaceInModel(newPlace: currentPlace)
             })
@@ -136,26 +142,32 @@ class AddViewController: UIViewController {
 
 extension AddViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             guard let imageCell = tableView.dequeueReusableCell(withIdentifier: AddImageCell.cellID, for: indexPath) as? AddImageCell else { return UITableViewCell() }
             transferCurrentPlaceImage(imageCell: imageCell)
-            imageCell.cellImageView.contentMode = .scaleAspectFill
             return imageCell
             
-        } else {
+        } else if 1...3 ~= indexPath.row {
             let row = indexPath.row - 1
             guard let infoCell = tableView.dequeueReusableCell(withIdentifier: AddInfoCell.cellID, for: indexPath) as? AddInfoCell else { return UITableViewCell() }
             infoCell.cellTextField.delegate = self
             transferCurrentPlaceData(infoCell: infoCell, row: row)
             return infoCell
-        }
+            
+        } else {
+            guard let ratingCell = tableView.dequeueReusableCell(withIdentifier: CustomRatingCell.cellID, for: indexPath) as? CustomRatingCell else { return UITableViewCell() }
+            transferCurrentPlaceRating(ratingCell: ratingCell)
+            return ratingCell
+        } 
+
     }
     
     //MARK: if controller open for editing
+    
     func transferCurrentPlaceData(infoCell: AddInfoCell, row: Int) {
         if currentPlace != nil {
 
@@ -168,6 +180,7 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
             let name = currentPlace?.name
             let location = currentPlace?.location
             let type = currentPlace?.type
+            let rating = currentPlace?.rating
             
             switch row {
             case 0:
@@ -187,7 +200,12 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
             default: break
             }
         } else {
-            infoCell.configure(label: AddInfoCell.labelsText[row], placeHolder: AddInfoCell.placeHoldersText[row])
+            switch row {
+            case 0...2:
+                infoCell.configure(label: AddInfoCell.labelsText[row], placeHolder: AddInfoCell.placeHoldersText[row])
+            default: break
+            }
+            
         }
     }
     
@@ -196,6 +214,14 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
             guard let imageData = currentPlace?.imageData else { return }
             let image = UIImage(data: imageData)
             imageCell.configureCell(image: image)
+            imageCell.cellImageView.contentMode = .scaleAspectFill
+        }
+    }
+    
+    func transferCurrentPlaceRating(ratingCell: CustomRatingCell) {
+        if currentPlace != nil {
+            guard let rating = currentPlace?.rating else { return }
+            ratingCell.rating = rating
         }
     }
     
