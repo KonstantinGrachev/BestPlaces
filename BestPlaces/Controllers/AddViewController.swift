@@ -180,7 +180,6 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
             let name = currentPlace?.name
             let location = currentPlace?.location
             let type = currentPlace?.type
-            let rating = currentPlace?.rating
             
             switch row {
             case 0:
