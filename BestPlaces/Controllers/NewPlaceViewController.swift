@@ -168,8 +168,7 @@ extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
             guard let ratingCell = tableView.dequeueReusableCell(withIdentifier: RatingCell.cellID, for: indexPath) as? RatingCell else { return UITableViewCell() }
             transferCurrentPlaceRating(ratingCell: ratingCell)
             return ratingCell
-        } 
-
+        }
     }
     
     //MARK: if controller open for editing
@@ -325,6 +324,7 @@ extension NewPlaceViewController {
 extension NewPlaceViewController: ImageCellDelegate {
     func openMap() {
         let mapController = MapViewController()
+        mapController.place = currentPlace
         navigationController?.pushViewController(mapController, animated: true)
     }
 }
