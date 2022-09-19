@@ -12,11 +12,32 @@ class PlaceCell: UITableViewCell {
         }
     }
     
+    //MARK: - properties
+    
     static let placeCellId = "PlaceCellId"
+    
+    var rating = 0 {
+        didSet {
+            updateButtonSelectionStates()
+        }
+    }
+    
+    private func updateButtonSelectionStates() {
+        for (index, button) in ratingButtons.enumerated() {
+            button.isSelected = index < rating
+        }
+    }
+    
+    private var ratingStackView = UIStackView()
+    private var ratingButtons = [UIButton]()
+    private let countButtons = 5
         
+    //MARK: - UI
+
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "name"
+        label.adjustsFontSizeToFitWidth = true
         label.font = .boldSystemFont(ofSize: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -25,6 +46,7 @@ class PlaceCell: UITableViewCell {
     private let locationLabel: UILabel = {
         let label = UILabel()
         label.text = "location"
+        label.adjustsFontSizeToFitWidth = true
         label.font = .systemFont(ofSize: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -48,6 +70,8 @@ class PlaceCell: UITableViewCell {
         return imageView
     }()
     
+    //MARK: - Initialization
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -58,25 +82,38 @@ class PlaceCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - funcs
+    
     private func setupViews() {
         contentView.backgroundColor = .secondarySystemBackground
         contentView.addSubview(nameLabel)
         contentView.addSubview(locationLabel)
         contentView.addSubview(typeLabel)
         contentView.addSubview(placeImageView)
+        setRatingStackView()
     }
     
+    private func setRatingStackView() {
+        ratingStackView = .createRatingStackView(buttonsArray: &ratingButtons,
+                                                 countButtons: countButtons)
+        contentView.addSubview(ratingStackView)
+    }
+    
+    //MARK: - configure cell
+
     func configure(model: PlaceModel) {
-        
         
         nameLabel.text = model.name
         locationLabel.text = model.location
         typeLabel.text = model.type
+        rating = model.rating
         
         guard let imageData = model.imageData else { return }
         placeImageView.image = UIImage(data: imageData)
     }
 }
+
+//MARK: - constraints
 
 extension PlaceCell {
     private func setConstraints() {
@@ -91,7 +128,7 @@ extension PlaceCell {
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: placeImageView.topAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: placeImageView.trailingAnchor, constant: Constants.Constraints.labelIndent),
-            nameLabel.leadingAnchor.constraint(equalTo: placeImageView.trailingAnchor, constant: Constants.Constraints.labelIndent)
+            nameLabel.trailingAnchor.constraint(equalTo: ratingStackView.leadingAnchor, constant: Constants.Constraints.labelIndent)
         ])
         
         NSLayoutConstraint.activate([
@@ -105,6 +142,12 @@ extension PlaceCell {
             typeLabel.bottomAnchor.constraint(equalTo: placeImageView.bottomAnchor),
             typeLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             typeLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            ratingStackView.widthAnchor.constraint(equalToConstant: 80),
+            ratingStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            ratingStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.Constraints.labelIndent)
         ])
     }
 }

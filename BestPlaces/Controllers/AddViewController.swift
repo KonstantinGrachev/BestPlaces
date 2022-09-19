@@ -254,17 +254,6 @@ extension AddViewController: UITextFieldDelegate {
         view.endEditing(true)
     }
     
-    //MARK: - saveButton handler
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
-        guard let name = nameCell.cellTextField.text else { return }
-        if name.isEmpty {
-            navigationItem.rightBarButtonItem?.isEnabled = false
-            return
-        }
-        navigationItem.rightBarButtonItem?.isEnabled = true
-    }
-
     private func registerForKeyboardNotifications() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow),
@@ -292,6 +281,18 @@ extension AddViewController: UITextFieldDelegate {
             self.view.layoutIfNeeded()
         }
     }
+    
+    //MARK: - saveButton handler textField
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
+        guard let name = nameCell.cellTextField.text else { return }
+        if name.isEmpty {
+            navigationItem.rightBarButtonItem?.isEnabled = false
+            return
+        }
+        navigationItem.rightBarButtonItem?.isEnabled = true
+    }
+
 }
 
 //MARK: - constraints

@@ -9,6 +9,8 @@ class ViewController: UIViewController {
         static let heightForRow: CGFloat = 85
     }
     
+    //MARK: - properties
+
     private var places: Results<PlaceModel>! = realm.objects(PlaceModel.self)
     private var filteredPlaces: Results<PlaceModel>!
     private var isSortedAscending = true
@@ -122,7 +124,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         if isFiltering {
             return filteredPlaces.count
         }
-        return places == nil ? 0 : places.count
+        return places.count
         
     }
     

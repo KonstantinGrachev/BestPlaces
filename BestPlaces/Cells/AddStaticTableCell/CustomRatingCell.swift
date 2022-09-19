@@ -12,6 +12,7 @@ class CustomRatingCell: UITableViewCell {
     
     private let countButtons = 5
     
+    
     var rating = 0 {
         didSet {
             updateButtonSelectionStates()
@@ -29,10 +30,6 @@ class CustomRatingCell: UITableViewCell {
     }
     
     @IBAction private func ratingButtonTapped(_ button: UIButton) {
-        calculateRatings(button)
-    }
-    
-    private func calculateRatings(_ button: UIButton) {
         guard let index = ratingButtons.firstIndex(of: button) else { return }
         let selectedRating = index + 1
         rating = selectedRating == rating ? 0 : selectedRating
@@ -44,27 +41,9 @@ class CustomRatingCell: UITableViewCell {
         }
     }
     
-    private func createButtons() {
-        for _ in 0..<countButtons {
-            lazy var starButton: UIButton = {
-                let button = UIButton()
-                button.setImage(UIImage(systemName: "star"), for: .normal)
-                button.setImage(UIImage(systemName: "star.fill"), for: .selected)
-                button.addTarget(self, action: #selector(ratingButtonTapped(_:)), for: .touchUpInside)
-                button.translatesAutoresizingMaskIntoConstraints = false
-                return button
-            }()
-            stackView.addArrangedSubview(starButton)
-            ratingButtons.append(starButton)
-        }
-    }
-    
     private func setStackView() {
+        stackView = .createRatingStackView(buttonsArray: &ratingButtons, countButtons: countButtons, target: self, action: #selector(ratingButtonTapped(_:)))
         contentView.addSubview(stackView)
-        stackView.axis = .horizontal
-        stackView.distribution = .equalCentering
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        createButtons()
         updateButtonSelectionStates()
     }
     
