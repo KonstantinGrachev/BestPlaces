@@ -16,12 +16,6 @@ class PlaceCell: UITableViewCell {
     
     static let placeCellId = "PlaceCellId"
     
-    var rating = 0 {
-        didSet {
-            updateButtonSelectionStates()
-        }
-    }
-    
     private func updateButtonSelectionStates() {
         for (index, button) in ratingButtons.enumerated() {
             button.isSelected = index < rating
@@ -31,6 +25,11 @@ class PlaceCell: UITableViewCell {
     private var ratingStackView = UIStackView()
     private var ratingButtons = [UIButton]()
     private let countButtons = 5
+    private var rating = 0 {
+        didSet {
+            updateButtonSelectionStates()
+        }
+    }
         
     //MARK: - UI
 
@@ -66,6 +65,8 @@ class PlaceCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = Constants.Constraints.cornerRadiusImageView
         imageView.clipsToBounds = true
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.gray.cgColor
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()

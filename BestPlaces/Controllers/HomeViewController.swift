@@ -1,7 +1,7 @@
 import UIKit
 import RealmSwift
 
-class ViewController: UIViewController {
+class HomeViewController: UIViewController {
     
     //MARK: - constants
     
@@ -89,7 +89,7 @@ class ViewController: UIViewController {
     //MARK: - @IBActions
     
     @IBAction private func addButtonTapped() {
-        let addPlaceController = AddViewController()
+        let addPlaceController = NewPlaceViewController()
         addPlaceController.delegate = self
         navigationController?.pushViewController(addPlaceController, animated: true)
     }
@@ -119,7 +119,7 @@ class ViewController: UIViewController {
 
 //MARK: - table view
 
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isFiltering {
             return filteredPlaces.count
@@ -151,18 +151,20 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         if isFiltering {
             place = filteredPlaces[indexPath.row]
         }
-        let testAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, _) in
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (_, _, _) in
             StorageManager.deletePlace(place)
             tableView.deleteRows(at: [indexPath], with: .none)
         }
-        return UISwipeActionsConfiguration(actions: [testAction])
+        deleteAction.image = UIImage(systemName: "trash")
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
     
     //MARK: - Show details and editing place
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let addNewPlaceViewController = AddViewController()
+        let addNewPlaceViewController = NewPlaceViewController()
         addNewPlaceViewController.currentPlace = places[indexPath.row]
         if isFiltering {
             addNewPlaceViewController.currentPlace = filteredPlaces[indexPath.row]
@@ -175,7 +177,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 
 //MARK: - constraints
 
-extension ViewController {
+extension HomeViewController {
     private func setConstraints() {
         
         NSLayoutConstraint.activate([
@@ -194,14 +196,14 @@ extension ViewController {
 
 //MARK: - delegate AddViewController
 
-extension ViewController: AddViewControllerDelegate {
-    func addNewPlaceInModel(newPlace: PlaceModel?) {
+extension HomeViewController: NewPlaceViewControllerDelegate {
+    func reloadHomeTableView() {
         placesTableView.reloadData()
     }
 }
 
 //MARK: - delegate search controller
-extension ViewController: UISearchControllerDelegate, UISearchResultsUpdating {
+extension HomeViewController: UISearchControllerDelegate, UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
         filterContentForSearchText(text)

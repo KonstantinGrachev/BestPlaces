@@ -1,6 +1,6 @@
 import UIKit
 
-class CustomRatingCell: UITableViewCell {
+class RatingCell: UITableViewCell {
     
     //MARK: - Properties
     

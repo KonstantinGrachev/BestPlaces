@@ -1,6 +1,6 @@
 import UIKit
 
-class AddInfoCell: UITableViewCell {
+class InfoCell: UITableViewCell {
     
     enum Constants {
         enum Constraints {

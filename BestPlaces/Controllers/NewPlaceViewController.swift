@@ -1,12 +1,12 @@
 import UIKit
 
-protocol AddViewControllerDelegate: AnyObject {
-    func addNewPlaceInModel(newPlace: PlaceModel?)
+protocol NewPlaceViewControllerDelegate: AnyObject {
+    func reloadHomeTableView()
 }
 
-class AddViewController: UIViewController {
+class NewPlaceViewController: UIViewController {
     
-    weak var delegate: AddViewControllerDelegate?
+    weak var delegate: NewPlaceViewControllerDelegate?
     
     var currentPlace: PlaceModel?
     
@@ -58,9 +58,9 @@ class AddViewController: UIViewController {
     }
     
     private func registerCell() {
-        tableView.register(AddImageCell.self, forCellReuseIdentifier: AddImageCell.cellID)
-        tableView.register(AddInfoCell.self, forCellReuseIdentifier: AddInfoCell.cellID)
-        tableView.register(CustomRatingCell.self, forCellReuseIdentifier: CustomRatingCell.cellID)
+        tableView.register(ImageCell.self, forCellReuseIdentifier: ImageCell.cellID)
+        tableView.register(InfoCell.self, forCellReuseIdentifier: InfoCell.cellID)
+        tableView.register(RatingCell.self, forCellReuseIdentifier: RatingCell.cellID)
     }
     
     private func setupViews() {
@@ -71,7 +71,7 @@ class AddViewController: UIViewController {
     //MARK: - pick image
 
     @objc override func handlePickedImage(_ image: UIImage) {
-        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
+        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageCell else { return }
         cell.cellImageView.image = image
         cell.cellImageView.contentMode = .scaleAspectFill
         imageIsChange = true
@@ -91,25 +91,26 @@ class AddViewController: UIViewController {
     //MARK: - save model
     
     private func savePlaceModel() {
-        guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? AddImageCell else { return }
+        guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageCell else { return }
         var image: UIImage?
         if imageIsChange {
             image = imageCell.cellImageView.image
         } else {
-            image = MainConstants.plainPlaceImage
+            image = nil
         }
-        let imageData = image?.pngData()
         
-        guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
+        var imageData = image?.pngData()
+        
+        guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? InfoCell else { return }
         guard let name = nameCell.cellTextField.text else { return }
         
-        guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? AddInfoCell else { return }
+        guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? InfoCell else { return }
         let location = locationCell.cellTextField.text
         
-        guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? AddInfoCell else { return }
+        guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? InfoCell else { return }
         let type = typeCell.cellTextField.text
         
-        guard let ratingCell = tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? CustomRatingCell else { return }
+        guard let ratingCell = tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? RatingCell else { return }
         let rating = ratingCell.rating
         
         let newPlace = PlaceModel.init(name: name,
@@ -119,6 +120,10 @@ class AddViewController: UIViewController {
                                        rating: rating)
         
         if currentPlace != nil {
+            if image == MainConstants.loadPhotoImage {
+                image = nil
+                imageData = image?.pngData()
+            }
             try! realm.write({
                 currentPlace?.name = name
                 currentPlace?.location = location
@@ -126,12 +131,12 @@ class AddViewController: UIViewController {
                 currentPlace?.imageData = imageData
                 currentPlace?.rating = rating
                 
-                delegate?.addNewPlaceInModel(newPlace: currentPlace)
+                delegate?.reloadHomeTableView()
             })
             
         } else {
             StorageManager.addNewPlaces(newPlace)
-            delegate?.addNewPlaceInModel(newPlace: newPlace)
+            delegate?.reloadHomeTableView()
         }
         
         
@@ -140,26 +145,27 @@ class AddViewController: UIViewController {
 
 //MARK: - table view
 
-extension AddViewController: UITableViewDelegate, UITableViewDataSource {
+extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            guard let imageCell = tableView.dequeueReusableCell(withIdentifier: AddImageCell.cellID, for: indexPath) as? AddImageCell else { return UITableViewCell() }
+            guard let imageCell = tableView.dequeueReusableCell(withIdentifier: ImageCell.cellID, for: indexPath) as? ImageCell else { return UITableViewCell() }
             transferCurrentPlaceImage(imageCell: imageCell)
+            imageCell.delegate = self
             return imageCell
             
         } else if 1...3 ~= indexPath.row {
             let row = indexPath.row - 1
-            guard let infoCell = tableView.dequeueReusableCell(withIdentifier: AddInfoCell.cellID, for: indexPath) as? AddInfoCell else { return UITableViewCell() }
+            guard let infoCell = tableView.dequeueReusableCell(withIdentifier: InfoCell.cellID, for: indexPath) as? InfoCell else { return UITableViewCell() }
             infoCell.cellTextField.delegate = self
             transferCurrentPlaceData(infoCell: infoCell, row: row)
             return infoCell
             
         } else {
-            guard let ratingCell = tableView.dequeueReusableCell(withIdentifier: CustomRatingCell.cellID, for: indexPath) as? CustomRatingCell else { return UITableViewCell() }
+            guard let ratingCell = tableView.dequeueReusableCell(withIdentifier: RatingCell.cellID, for: indexPath) as? RatingCell else { return UITableViewCell() }
             transferCurrentPlaceRating(ratingCell: ratingCell)
             return ratingCell
         } 
@@ -168,14 +174,14 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: if controller open for editing
     
-    func transferCurrentPlaceData(infoCell: AddInfoCell, row: Int) {
+    func transferCurrentPlaceData(infoCell: InfoCell, row: Int) {
         if currentPlace != nil {
 
             imageIsChange = true
             navigationItem.rightBarButtonItem?.isEnabled = true
             
-            let textLabel = AddInfoCell.labelsText[row]
-            let defaultTextPlaceholder = AddInfoCell.placeHoldersText[row]
+            let textLabel = InfoCell.labelsText[row]
+            let defaultTextPlaceholder = InfoCell.placeHoldersText[row]
             
             let name = currentPlace?.name
             let location = currentPlace?.location
@@ -201,14 +207,14 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             switch row {
             case 0...2:
-                infoCell.configure(label: AddInfoCell.labelsText[row], placeHolder: AddInfoCell.placeHoldersText[row])
+                infoCell.configure(label: InfoCell.labelsText[row], placeHolder: InfoCell.placeHoldersText[row])
             default: break
             }
             
         }
     }
     
-    func transferCurrentPlaceImage(imageCell: AddImageCell) {
+    func transferCurrentPlaceImage(imageCell: ImageCell) {
         if currentPlace != nil {
             guard let imageData = currentPlace?.imageData else { return }
             let image = UIImage(data: imageData)
@@ -217,7 +223,7 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func transferCurrentPlaceRating(ratingCell: CustomRatingCell) {
+    func transferCurrentPlaceRating(ratingCell: RatingCell) {
         if currentPlace != nil {
             guard let rating = currentPlace?.rating else { return }
             ratingCell.rating = rating
@@ -244,7 +250,7 @@ extension AddViewController: UITableViewDelegate, UITableViewDataSource {
 
 //MARK: - keyboard
 
-extension AddViewController: UITextFieldDelegate {
+extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         hideKeyboard()
         return true
@@ -284,7 +290,7 @@ extension AddViewController: UITextFieldDelegate {
     
     //MARK: - saveButton handler textField
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? AddInfoCell else { return }
+        guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? InfoCell else { return }
         guard let name = nameCell.cellTextField.text else { return }
         if name.isEmpty {
             navigationItem.rightBarButtonItem?.isEnabled = false
@@ -297,7 +303,7 @@ extension AddViewController: UITextFieldDelegate {
 
 //MARK: - constraints
 
-extension AddViewController {
+extension NewPlaceViewController {
     func setConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -313,5 +319,12 @@ extension AddViewController {
                                                               multiplier: 1,
                                                               constant: 0)
         bottomAnchorScrollViewConstraint?.isActive = true
+    }
+}
+
+extension NewPlaceViewController: ImageCellDelegate {
+    func openMap() {
+        let mapController = MapViewController()
+        navigationController?.pushViewController(mapController, animated: true)
     }
 }
