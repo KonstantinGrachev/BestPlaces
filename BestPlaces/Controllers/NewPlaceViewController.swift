@@ -92,12 +92,8 @@ class NewPlaceViewController: UIViewController {
     
     private func savePlaceModel() {
         guard let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageCell else { return }
-        var image: UIImage?
-        if imageIsChange {
-            image = imageCell.cellImageView.image
-        } else {
-            image = nil
-        }
+        
+        var image = imageIsChange ? imageCell.cellImageView.image : nil
         
         var imageData = image?.pngData()
         
@@ -324,7 +320,33 @@ extension NewPlaceViewController {
 extension NewPlaceViewController: ImageCellDelegate {
     func openMap() {
         let mapController = MapViewController()
-        mapController.place = currentPlace
+        
+        var placeMap = PlaceModel()
+        
+        if let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageCell {
+            if let imageData = imageCell.cellImageView.image?.pngData() {
+                placeMap.imageData = imageData
+            }
+        }
+        
+        if let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? InfoCell {
+            if let name = nameCell.cellTextField.text {
+                placeMap.name = name
+            }
+        }
+        
+        if let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? InfoCell {
+            if let location = locationCell.cellTextField.text {
+                placeMap.location = location
+            }
+        }
+        
+        if let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? InfoCell {
+            if let type = typeCell.cellTextField.text {
+                placeMap.type = type
+            }
+        }
+        mapController.place = placeMap
         navigationController?.pushViewController(mapController, animated: true)
     }
 }
