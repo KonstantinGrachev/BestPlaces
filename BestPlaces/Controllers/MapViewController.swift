@@ -48,7 +48,7 @@ class MapViewController: UIViewController {
         setConstraints()
     }
     
-    // MARK: - set navigation controller
+    // MARK: - setup views
     
     private func setNavigationController() {
         var image = UIImage(systemName: "xmark")
@@ -69,8 +69,15 @@ class MapViewController: UIViewController {
         locationManager.delegate = self
     }
     
+    // MARK: - @IBAction funcs
+
     @IBAction private func dismissButtonTapped() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction private func centerLocationButtonTapped() {
+        guard let location = locationManager.location else { return }
+        mapView.centerToLocation(location)
     }
     
     // MARK: - setup placemarks
@@ -99,10 +106,6 @@ class MapViewController: UIViewController {
         }
     }
     
-    @IBAction private func centerLocationButtonTapped() {
-        locationManager.startUpdatingLocation()
-    }
-    
     // MARK: - set constraints
 
     private func setConstraints() {
@@ -124,9 +127,6 @@ class MapViewController: UIViewController {
 
 extension MapViewController: MKMapViewDelegate {
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        mapView.centerToLocation(manager.location!)
-    }
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard !(annotation is MKUserLocation) else { return nil }
         
@@ -146,6 +146,8 @@ extension MapViewController: MKMapViewDelegate {
     }
 }
 
+//MARK: - center user location
+
 private extension MKMapView {
     func centerToLocation(_ location: CLLocation, regionRadius: CLLocationDistance = 1000) {
         let coordinateRegion = MKCoordinateRegion(center: location.coordinate,
@@ -154,6 +156,8 @@ private extension MKMapView {
         setRegion(coordinateRegion, animated: true)
     }
 }
+
+//MARK: - user location
 
 extension MapViewController: CLLocationManagerDelegate {
     
