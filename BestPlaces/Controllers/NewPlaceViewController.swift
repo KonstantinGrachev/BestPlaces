@@ -321,7 +321,7 @@ extension NewPlaceViewController: ImageCellDelegate {
     func openMap() {
         let mapController = MapViewController()
         
-        var placeMap = PlaceModel()
+        let placeMap = PlaceModel()
         
         if let imageCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageCell {
             if let imageData = imageCell.cellImageView.image?.pngData() {

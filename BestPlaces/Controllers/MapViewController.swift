@@ -1,5 +1,6 @@
 import UIKit
 import MapKit
+import CoreLocation
 
 class MapViewController: UIViewController {
     
@@ -12,6 +13,7 @@ class MapViewController: UIViewController {
     
     //MARK: - properties
     var place: PlaceModel?
+    lazy var locationManager = CLLocationManager()
     
     let annotationID = "annotationID"
     //MARK: - UI
@@ -30,6 +32,7 @@ class MapViewController: UIViewController {
         setNavigationController()
         setupPlaceMarks()
         setDelegates()
+        checkLocationServices()
         setConstraints()
     }
     
@@ -46,6 +49,7 @@ class MapViewController: UIViewController {
     
     private func setDelegates() {
         mapView.delegate = self
+        locationManager.delegate = self
     }
     
     @IBAction private func dismissButtonTapped() {
@@ -107,5 +111,48 @@ extension MapViewController: MKMapViewDelegate {
             annotationView?.leftCalloutAccessoryView = imageView
         }
         return annotationView
+    }
+}
+
+extension MapViewController: CLLocationManagerDelegate {
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        checkLocationAutorization()
+    }
+    
+    private func checkLocationServices() {
+        if CLLocationManager.locationServicesEnabled() {
+            setupLocationManager()
+            checkLocationAutorization()
+        } else {
+                self.showAlert(title: "Location is not avaiable",
+                          message: "Go to Settings ->\nPrivacy ->\nLocation ->\n Location Services and turn on")
+        }
+    }
+    
+    private func setupLocationManager() {
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    
+    private func checkLocationAutorization() {
+        switch locationManager.authorizationStatus {
+        case .authorizedWhenInUse:
+            mapView.showsUserLocation = true
+            break
+        case .denied:
+            self.showAlert(title: "Location is not avaiable",
+                      message: "Go to Settings ->\nBestPlaces ->\nLocation")
+            break
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted:
+            self.showAlert(title: "Location is not avaiable",
+                      message: "Go to Settings ->\nBestPlaces ->\nLocation")
+            break
+        case .authorizedAlways:
+            break
+        @unknown default:
+            print("New case in locationManager.authorizationStatus is available")
+        }
     }
 }

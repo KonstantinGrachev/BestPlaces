@@ -32,7 +32,7 @@ extension UIViewController: UIImagePickerControllerDelegate, UINavigationControl
     func showPicker(source: UIImagePickerController.SourceType) {
         if UIImagePickerController.isSourceTypeAvailable(source) {
             let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
+            picker.sourceType = source
             picker.allowsEditing = true
             picker.delegate = self
             present(picker, animated: true, completion: nil)
@@ -52,5 +52,17 @@ extension UIViewController: UIImagePickerControllerDelegate, UINavigationControl
     }
     
     @objc func handlePickedImage(_ image: UIImage) {
+    }
+}
+
+extension UIViewController {
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK",
+                               style: .default)
+        alert.addAction(ok)
+        present(alert, animated: true)
     }
 }
