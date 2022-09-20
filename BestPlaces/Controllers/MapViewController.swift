@@ -6,15 +6,14 @@ class MapViewController: UIViewController {
     
     enum Constants {
         enum Constraints {
-            static let sideIndentation: CGFloat = 30
-            static let dismissButtonSize: CGFloat = 44
+            static let sideIndentation: CGFloat = 40
+            static let centerLocationButtonWidthHeight: CGFloat = 50
         }
     }
     
     //MARK: - properties
     var place: PlaceModel?
     lazy var locationManager = CLLocationManager()
-    
     let annotationID = "annotationID"
     //MARK: - UI
 
@@ -24,11 +23,24 @@ class MapViewController: UIViewController {
         return map
     }()
     
+    private lazy var centerUserLocationButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "compass"), for: .normal)
+        button.backgroundColor = .gray
+        button.clipsToBounds = true
+        button.layer.cornerRadius = Constants.Constraints.centerLocationButtonWidthHeight / 2
+        button.imageView?.contentMode = .scaleToFill
+        button.addTarget(self, action: #selector(centerLocationButtonTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+        
+    }()
+    
     //MARK: - viewDidLoad
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(mapView)
+        setupViews()
         setNavigationController()
         setupPlaceMarks()
         setDelegates()
@@ -45,6 +57,11 @@ class MapViewController: UIViewController {
                                                            style:.plain,
                                                            target: self,
                                                            action: #selector(dismissButtonTapped))
+    }
+    
+    private func setupViews() {
+        view.addSubview(mapView)
+        mapView.addSubview(centerUserLocationButton)
     }
     
     private func setDelegates() {
@@ -82,6 +99,10 @@ class MapViewController: UIViewController {
         }
     }
     
+    @IBAction private func centerLocationButtonTapped() {
+        locationManager.startUpdatingLocation()
+    }
+    
     // MARK: - set constraints
 
     private func setConstraints() {
@@ -91,10 +112,21 @@ class MapViewController: UIViewController {
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            centerUserLocationButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Constraints.sideIndentation),
+            centerUserLocationButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.Constraints.sideIndentation),
+            centerUserLocationButton.widthAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight),
+            centerUserLocationButton.heightAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight)
+        ])
     }
 }
 
 extension MapViewController: MKMapViewDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        mapView.centerToLocation(manager.location!)
+    }
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard !(annotation is MKUserLocation) else { return nil }
         
@@ -111,6 +143,15 @@ extension MapViewController: MKMapViewDelegate {
             annotationView?.leftCalloutAccessoryView = imageView
         }
         return annotationView
+    }
+}
+
+private extension MKMapView {
+    func centerToLocation(_ location: CLLocation, regionRadius: CLLocationDistance = 1000) {
+        let coordinateRegion = MKCoordinateRegion(center: location.coordinate,
+                                                  latitudinalMeters: regionRadius,
+                                                  longitudinalMeters: regionRadius)
+        setRegion(coordinateRegion, animated: true)
     }
 }
 
