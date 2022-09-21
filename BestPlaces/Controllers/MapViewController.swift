@@ -15,7 +15,12 @@ class MapViewController: UIViewController {
     var place: PlaceModel?
     lazy var locationManager = CLLocationManager()
     let annotationID = "annotationID"
-    var isGetAddress = false
+    var isGetAddress = false {
+        didSet {
+            checkLocationServices()
+            centerLocationButtonTapped()
+        }
+    }
     
     //MARK: - UI
 
@@ -44,9 +49,9 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setNavigationController()
-        setupPlaceMarks()
         setDelegates()
         checkLocationServices()
+        setupPlaceMarks()
         setConstraints()
     }
     
@@ -173,7 +178,7 @@ extension MapViewController: CLLocationManagerDelegate {
             checkLocationAutorization()
         } else {
                 self.showAlert(title: "Location is not avaiable",
-                          message: "Go to Settings ->\nPrivacy ->\nLocation ->\n Location Services and turn on")
+                          message: "Go to Settings >\nPrivacy >\nLocation >\n Location Services and turn on")
         }
     }
     
@@ -188,13 +193,13 @@ extension MapViewController: CLLocationManagerDelegate {
             break
         case .denied:
             self.showAlert(title: "Location is not avaiable",
-                      message: "Go to Settings ->\nBestPlaces ->\nLocation")
+                      message: "Go to Settings >\nBestPlaces >\nLocation")
             break
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
         case .restricted:
             self.showAlert(title: "Location is not avaiable",
-                      message: "Go to Settings ->\nBestPlaces ->\nLocation")
+                      message: "Go to Settings >\nBestPlaces >\nLocation")
             break
         case .authorizedAlways:
             break
