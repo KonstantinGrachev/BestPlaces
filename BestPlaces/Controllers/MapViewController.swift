@@ -8,6 +8,8 @@ class MapViewController: UIViewController {
         enum Constraints {
             static let sideIndentation: CGFloat = 40
             static let centerLocationButtonWidthHeight: CGFloat = 50
+            static let addressLabelTopConstraint: CGFloat = 150
+            static let pinWidthHeight: CGFloat = 40
         }
     }
     
@@ -19,6 +21,9 @@ class MapViewController: UIViewController {
         didSet {
             checkLocationServices()
             centerLocationButtonTapped()
+            addressLabel.isHidden = false
+            doneButton.isHidden = false
+            pinImageView.isHidden = false
         }
     }
     
@@ -40,7 +45,39 @@ class MapViewController: UIViewController {
         button.addTarget(self, action: #selector(centerLocationButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-        
+    }()
+    
+    private let addressLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Place address"
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 30)
+        label.adjustsFontSizeToFitWidth = true
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var doneButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        button.setTitle("Done", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 30)
+        button.isHidden = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private let pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "pin")
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     //MARK: - viewDidLoad
@@ -53,6 +90,10 @@ class MapViewController: UIViewController {
         checkLocationServices()
         setupPlaceMarks()
         setConstraints()
+    }
+    
+    @IBAction private func doneButtonTapped() {
+        print("doneButton")
     }
     
     // MARK: - setup views
@@ -69,6 +110,9 @@ class MapViewController: UIViewController {
     private func setupViews() {
         view.addSubview(mapView)
         mapView.addSubview(centerUserLocationButton)
+        mapView.addSubview(addressLabel)
+        mapView.addSubview(pinImageView)
+        mapView.addSubview(doneButton)
     }
     
     private func setDelegates() {
@@ -128,6 +172,24 @@ class MapViewController: UIViewController {
             centerUserLocationButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.Constraints.sideIndentation),
             centerUserLocationButton.widthAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight),
             centerUserLocationButton.heightAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight)
+        ])
+        
+        NSLayoutConstraint.activate([
+            addressLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Constraints.sideIndentation),
+            addressLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Constraints.sideIndentation),
+            addressLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.Constraints.addressLabelTopConstraint)
+        ])
+        
+        NSLayoutConstraint.activate([
+            pinImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pinImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            pinImageView.widthAnchor.constraint(equalToConstant: Constants.Constraints.pinWidthHeight),
+            pinImageView.heightAnchor.constraint(equalToConstant: Constants.Constraints.pinWidthHeight)
+        ])
+        
+        NSLayoutConstraint.activate([
+            doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.Constraints.sideIndentation)
         ])
     }
 }
