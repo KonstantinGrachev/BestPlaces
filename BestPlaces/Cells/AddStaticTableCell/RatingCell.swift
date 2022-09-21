@@ -12,7 +12,6 @@ class RatingCell: UITableViewCell {
     
     private let countButtons = 5
     
-    
     var rating = 0 {
         didSet {
             updateButtonSelectionStates()
@@ -21,6 +20,7 @@ class RatingCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.backgroundColor = .secondarySystemBackground
         setStackView()
         setConstraints()
     }

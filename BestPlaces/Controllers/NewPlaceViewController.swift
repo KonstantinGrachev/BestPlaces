@@ -52,6 +52,8 @@ class NewPlaceViewController: UIViewController {
 
     }
     
+    //MARK: - set delegates
+
     private func setDelegates() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -61,6 +63,7 @@ class NewPlaceViewController: UIViewController {
         tableView.register(ImageCell.self, forCellReuseIdentifier: ImageCell.cellID)
         tableView.register(InfoCell.self, forCellReuseIdentifier: InfoCell.cellID)
         tableView.register(RatingCell.self, forCellReuseIdentifier: RatingCell.cellID)
+        tableView.register(LocationCell.self, forCellReuseIdentifier: LocationCell.cellID)
     }
     
     private func setupViews() {
@@ -100,7 +103,7 @@ class NewPlaceViewController: UIViewController {
         guard let nameCell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? InfoCell else { return }
         guard let name = nameCell.cellTextField.text else { return }
         
-        guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? InfoCell else { return }
+        guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? LocationCell else { return }
         let location = locationCell.cellTextField.text
         
         guard let typeCell = tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? InfoCell else { return }
@@ -134,8 +137,6 @@ class NewPlaceViewController: UIViewController {
             StorageManager.addNewPlaces(newPlace)
             delegate?.reloadHomeTableView()
         }
-        
-        
     }
 }
 
@@ -147,29 +148,37 @@ extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == 0 {
+        switch indexPath.row {
+        case 0:
             guard let imageCell = tableView.dequeueReusableCell(withIdentifier: ImageCell.cellID, for: indexPath) as? ImageCell else { return UITableViewCell() }
-            transferCurrentPlaceImage(imageCell: imageCell)
-            imageCell.delegate = self
-            return imageCell
-            
-        } else if 1...3 ~= indexPath.row {
+                        transferCurrentPlaceImage(imageCell: imageCell)
+                        imageCell.delegate = self
+                        return imageCell
+        
+        case 1, 3:
             let row = indexPath.row - 1
-            guard let infoCell = tableView.dequeueReusableCell(withIdentifier: InfoCell.cellID, for: indexPath) as? InfoCell else { return UITableViewCell() }
-            infoCell.cellTextField.delegate = self
-            transferCurrentPlaceData(infoCell: infoCell, row: row)
-            return infoCell
+                        guard let infoCell = tableView.dequeueReusableCell(withIdentifier: InfoCell.cellID, for: indexPath) as? InfoCell else { return UITableViewCell() }
+                        infoCell.cellTextField.delegate = self
+                        transferCurrentPlaceNameAndType(infoCell: infoCell, row: row)
+                        return infoCell
+        case 2:
+                        guard let locationCell = tableView.dequeueReusableCell(withIdentifier: LocationCell.cellID, for: indexPath) as? LocationCell else { return UITableViewCell() }
+                        locationCell.delegate = self
+                        transferCurrentPlaceLocation(locationCell: locationCell, row: 1)
+                        return locationCell
             
-        } else {
-            guard let ratingCell = tableView.dequeueReusableCell(withIdentifier: RatingCell.cellID, for: indexPath) as? RatingCell else { return UITableViewCell() }
-            transferCurrentPlaceRating(ratingCell: ratingCell)
-            return ratingCell
+        case 4:
+                        guard let ratingCell = tableView.dequeueReusableCell(withIdentifier: RatingCell.cellID, for: indexPath) as? RatingCell else { return UITableViewCell() }
+                        transferCurrentPlaceRating(ratingCell: ratingCell)
+                        return ratingCell
+        default:
+            return UITableViewCell()
         }
     }
     
     //MARK: if controller open for editing
     
-    func transferCurrentPlaceData(infoCell: InfoCell, row: Int) {
+    func transferCurrentPlaceNameAndType(infoCell: InfoCell, row: Int) {
         if currentPlace != nil {
 
             imageIsChange = true
@@ -179,18 +188,11 @@ extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
             let defaultTextPlaceholder = InfoCell.placeHoldersText[row]
             
             let name = currentPlace?.name
-            let location = currentPlace?.location
             let type = currentPlace?.type
             
             switch row {
             case 0:
                 infoCell.configure(label: textLabel, text: name)
-            case 1:
-                if location != "" {
-                    infoCell.configure(label: textLabel, text: location)
-                } else {
-                    infoCell.configure(label: textLabel, placeHolder: defaultTextPlaceholder)
-                }
             case 2:
                 if type != "" {
                     infoCell.configure(label: textLabel, text: type)
@@ -201,11 +203,26 @@ extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
             }
         } else {
             switch row {
-            case 0...2:
+            case 0, 2:
                 infoCell.configure(label: InfoCell.labelsText[row], placeHolder: InfoCell.placeHoldersText[row])
             default: break
             }
+        }
+    }
+    
+    func transferCurrentPlaceLocation(locationCell: LocationCell, row: Int) {
+        if currentPlace != nil {
             
+            let location = currentPlace?.location
+            
+            if location != "" {
+                locationCell.configure(label: "Location", text: location)
+            } else {
+                locationCell.configure(label: "Location", placeHolder: "Enter address")
+            }
+    
+        } else {
+            locationCell.configure(label: "Location", placeHolder: "Enter address")
         }
     }
     
@@ -335,7 +352,7 @@ extension NewPlaceViewController: ImageCellDelegate {
             }
         }
         
-        if let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? InfoCell {
+        if let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? LocationCell {
             if let location = locationCell.cellTextField.text {
                 placeMap.location = location
             }
@@ -348,5 +365,13 @@ extension NewPlaceViewController: ImageCellDelegate {
         }
         mapController.place = placeMap
         navigationController?.pushViewController(mapController, animated: true)
+    }
+}
+
+extension NewPlaceViewController: LocationCellDelegate {
+    func getAdress() {
+        let mapViewController = MapViewController()
+        mapViewController.isGetAddress = true
+        navigationController?.pushViewController(mapViewController, animated: true)
     }
 }

@@ -15,6 +15,8 @@ class MapViewController: UIViewController {
     var place: PlaceModel?
     lazy var locationManager = CLLocationManager()
     let annotationID = "annotationID"
+    var isGetAddress = false
+    
     //MARK: - UI
 
     private let mapView: MKMapView = {
