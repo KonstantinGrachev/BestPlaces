@@ -164,7 +164,7 @@ extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
         case 2:
                         guard let locationCell = tableView.dequeueReusableCell(withIdentifier: LocationCell.cellID, for: indexPath) as? LocationCell else { return UITableViewCell() }
                         locationCell.delegate = self
-                        transferCurrentPlaceLocation(locationCell: locationCell, row: 1)
+                        transferCurrentPlaceLocation(locationCell: locationCell)
                         return locationCell
             
         case 4:
@@ -210,7 +210,7 @@ extension NewPlaceViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func transferCurrentPlaceLocation(locationCell: LocationCell, row: Int) {
+    func transferCurrentPlaceLocation(locationCell: LocationCell) {
         if currentPlace != nil {
             
             let location = currentPlace?.location
@@ -334,6 +334,8 @@ extension NewPlaceViewController {
     }
 }
 
+//MARK: - ImageCellDelegate
+
 extension NewPlaceViewController: ImageCellDelegate {
     func openMap() {
         let mapController = MapViewController()
@@ -368,10 +370,21 @@ extension NewPlaceViewController: ImageCellDelegate {
     }
 }
 
+//MARK: - LocationCellDelegate
 extension NewPlaceViewController: LocationCellDelegate {
     func getAdress() {
         let mapViewController = MapViewController()
         mapViewController.isGetAddress = true
+        mapViewController.delegate = self
         navigationController?.pushViewController(mapViewController, animated: true)
+    }
+}
+
+//MARK: - MapViewControllerDelegate
+
+extension NewPlaceViewController: MapViewControllerDelegate {
+    func getAddress(address text: String) {
+        guard let locationCell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? LocationCell else { return }
+        locationCell.cellTextField.text = text
     }
 }

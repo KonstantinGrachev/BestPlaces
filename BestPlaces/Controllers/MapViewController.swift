@@ -3,7 +3,7 @@ import MapKit
 import CoreLocation
 
 protocol MapViewControllerDelegate: AnyObject {
-    func getAddress(text string: String)
+    func getAddress(address text: String)
 }
 
 class MapViewController: UIViewController {
@@ -98,10 +98,6 @@ class MapViewController: UIViewController {
         setConstraints()
     }
     
-    @IBAction private func doneButtonTapped() {
-        print("doneButton")
-    }
-    
     // MARK: - setup views
     
     private func setNavigationController() {
@@ -135,6 +131,12 @@ class MapViewController: UIViewController {
     @IBAction private func centerLocationButtonTapped() {
         guard let location = locationManager.location else { return }
         mapView.centerToLocation(location)
+    }
+    
+    @IBAction private func doneButtonTapped() {
+        guard let address = addressLabel.text else { return }
+        delegate?.getAddress(address: address)
+        navigationController?.popViewController(animated: true)
     }
     
     // MARK: - setup placemarks
