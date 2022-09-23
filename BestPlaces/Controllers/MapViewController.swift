@@ -2,6 +2,10 @@ import UIKit
 import MapKit
 import CoreLocation
 
+protocol MapViewControllerDelegate: AnyObject {
+    func getAddress(text string: String)
+}
+
 class MapViewController: UIViewController {
     
     enum Constants {
@@ -14,6 +18,9 @@ class MapViewController: UIViewController {
     }
     
     //MARK: - properties
+    
+    weak var delegate: MapViewControllerDelegate?
+    
     var place: PlaceModel?
     lazy var locationManager = CLLocationManager()
     let annotationID = "annotationID"
@@ -49,7 +56,6 @@ class MapViewController: UIViewController {
     
     private let addressLabel: UILabel = {
         let label = UILabel()
-        label.text = "Place address"
         label.textColor = .black
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 30)
@@ -60,7 +66,7 @@ class MapViewController: UIViewController {
     }()
     
     private lazy var doneButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         button.setTitle("Done", for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
@@ -267,6 +273,42 @@ extension MapViewController: CLLocationManagerDelegate {
             break
         @unknown default:
             print("New case in locationManager.authorizationStatus is available")
+        }
+    }
+}
+
+extension MapViewController {
+    private func getCenterLocationFromMapView(for mapView: MKMapView) -> CLLocation {
+        let latitude = mapView.centerCoordinate.latitude
+        let longitude = mapView.centerCoordinate.longitude
+        return CLLocation(latitude: latitude, longitude: longitude)
+    }
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        
+        let center = getCenterLocationFromMapView(for: mapView)
+        
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(center) { (placemarks, error) in
+            if let error = error {
+                print(error)
+                return
+            }
+            
+            guard let placemarks = placemarks else { return }
+            let placemark = placemarks.first
+            let streetName = placemark?.thoroughfare
+            let buildNumber = placemark?.subThoroughfare
+            
+            DispatchQueue.main.async {
+                if streetName != nil && buildNumber != nil {
+                    self.addressLabel.text = "\(streetName!), \(buildNumber!)"
+                } else if streetName != nil {
+                    self.addressLabel.text = "\(streetName!)"
+                } else {
+                    self.addressLabel.text = ""
+                }
+            }
         }
     }
 }
