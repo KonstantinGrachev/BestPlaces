@@ -23,6 +23,7 @@
 		348862C728CE00730062F4B3 /* PlaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862C628CE00730062F4B3 /* PlaceModel.swift */; };
 		348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */; };
 		349A761128DAD67600B3CCDA /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A761028DAD67600B3CCDA /* LocationCell.swift */; };
+		349A761328DEF6E800B3CCDA /* Int+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A761228DEF6E800B3CCDA /* Int+extensions.swift */; };
 		34FC728D28D8526200565BE0 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FC728C28D8526200565BE0 /* MapViewController.swift */; };
 		44C0627F28D6E66D007A3316 /* RatingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C0627E28D6E66D007A3316 /* RatingCell.swift */; };
 		A04342E215E7F7052AFA35A9 /* Pods_BestPlaces.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5928F4A8FFD2BF7765E53B /* Pods_BestPlaces.framework */; };
@@ -47,6 +48,7 @@
 		348862C628CE00730062F4B3 /* PlaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceModel.swift; sourceTree = "<group>"; };
 		348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+extensions.swift"; sourceTree = "<group>"; };
 		349A761028DAD67600B3CCDA /* LocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
+		349A761228DEF6E800B3CCDA /* Int+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+extensions.swift"; sourceTree = "<group>"; };
 		34FC728C28D8526200565BE0 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		44C0627E28D6E66D007A3316 /* RatingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingCell.swift; sourceTree = "<group>"; };
 		5D5928F4A8FFD2BF7765E53B /* Pods_BestPlaces.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BestPlaces.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -125,6 +127,7 @@
 			children = (
 				348862CC28CF199B0062F4B3 /* UIStackView+extensions.swift */,
 				347AA17D28D32AD000CE1DA6 /* UIViewController+extensions.swift */,
+				349A761228DEF6E800B3CCDA /* Int+extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				344D837128D036A100F71E79 /* NewPlaceViewController.swift in Sources */,
 				347AA18528D3B8C300CE1DA6 /* StorageManager.swift in Sources */,
 				344A19E028C89B5900EFC8B6 /* AppDelegate.swift in Sources */,
+				349A761328DEF6E800B3CCDA /* Int+extensions.swift in Sources */,
 				347AA17E28D32AD000CE1DA6 /* UIViewController+extensions.swift in Sources */,
 				349A761128DAD67600B3CCDA /* LocationCell.swift in Sources */,
 				348862CD28CF199B0062F4B3 /* UIStackView+extensions.swift in Sources */,

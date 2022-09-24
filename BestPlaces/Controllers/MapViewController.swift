@@ -11,7 +11,7 @@ class MapViewController: UIViewController {
     enum Constants {
         enum Constraints {
             static let sideIndentation: CGFloat = 40
-            static let centerLocationButtonWidthHeight: CGFloat = 50
+            static let centerLocationButtonWidthHeight: CGFloat = 80
             static let addressLabelTopConstraint: CGFloat = 150
             static let pinWidthHeight: CGFloat = 40
         }
@@ -24,6 +24,7 @@ class MapViewController: UIViewController {
     var place: PlaceModel?
     lazy var locationManager = CLLocationManager()
     let annotationID = "annotationID"
+    var placeCoordinate: CLLocationCoordinate2D?
     var isGetAddress = false {
         didSet {
             checkLocationServices()
@@ -31,6 +32,7 @@ class MapViewController: UIViewController {
             addressLabel.isHidden = false
             doneButton.isHidden = false
             pinImageView.isHidden = false
+            goButton.isHidden = true
         }
     }
     
@@ -76,6 +78,14 @@ class MapViewController: UIViewController {
         return button
     }()
     
+    private lazy var goButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "direction"), for: .normal)
+        button.addTarget(self, action: #selector(goButtonTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     private let pinImageView: UIImageView = {
         let imageView = UIImageView()
         let image = UIImage(named: "pin")
@@ -115,6 +125,7 @@ class MapViewController: UIViewController {
         mapView.addSubview(addressLabel)
         mapView.addSubview(pinImageView)
         mapView.addSubview(doneButton)
+        mapView.addSubview(goButton)
     }
     
     private func setDelegates() {
@@ -139,6 +150,10 @@ class MapViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
+    @IBAction private func goButtonTapped() {
+        getDirection()
+    }
+    
     // MARK: - setup placemarks
 
     private func setupPlaceMarks() {
@@ -160,6 +175,7 @@ class MapViewController: UIViewController {
             annotation.subtitle = place.type
             guard let placemarkLocation = placemark?.location else { return }
             annotation.coordinate = placemarkLocation.coordinate
+            placeCoordinate = placemarkLocation.coordinate
             mapView.showAnnotations([annotation], animated: true)
             mapView.selectAnnotation(annotation, animated: true)
         }
@@ -199,9 +215,17 @@ class MapViewController: UIViewController {
             doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.Constraints.sideIndentation)
         ])
+        
+        NSLayoutConstraint.activate([
+            goButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            goButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.Constraints.sideIndentation),
+            goButton.widthAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight),
+            goButton.heightAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight)
+        ])
     }
 }
 
+//MARK: - MKMapViewDelegate
 extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -220,6 +244,13 @@ extension MapViewController: MKMapViewDelegate {
             annotationView?.leftCalloutAccessoryView = imageView
         }
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(overlay: overlay as! MKPolyline)
+        renderer.strokeColor = .cyan
+        
+        return renderer
     }
 }
 
@@ -299,11 +330,14 @@ extension MapViewController {
             
             guard let placemarks = placemarks else { return }
             let placemark = placemarks.first
+            let cityName = placemark?.locality
             let streetName = placemark?.thoroughfare
             let buildNumber = placemark?.subThoroughfare
             
             DispatchQueue.main.async {
-                if streetName != nil && buildNumber != nil {
+                if cityName != nil && streetName != nil && buildNumber != nil {
+                    self.addressLabel.text = "\(cityName!), \(streetName!), \(buildNumber!)"
+                } else if streetName != nil && buildNumber != nil {
                     self.addressLabel.text = "\(streetName!), \(buildNumber!)"
                 } else if streetName != nil {
                     self.addressLabel.text = "\(streetName!)"
@@ -312,5 +346,57 @@ extension MapViewController {
                 }
             }
         }
+    }
+}
+
+//MARK: - get direction
+
+extension MapViewController {
+    private func getDirection() {
+        guard let location = locationManager.location?.coordinate else {
+            showAlert(title: "Error", message: "Current location is not found")
+            return
+        }
+        guard let request = createDirectionRequest(from: location) else {
+            showAlert(title: "Error", message: "Destination is not found")
+            return
+        }
+        
+        let directions = MKDirections(request: request)
+        directions.calculate { response, error in
+            if let error = error {
+                print(error)
+                return
+            }
+            
+            guard let response = response else {
+                self.showAlert(title: "Error", message: "Direction is not available")
+                return
+            }
+
+            for route in response.routes {
+                self.mapView.addOverlay(route.polyline)
+                self.mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+                
+                let distance = String(format: "%.1f", route.distance / 1000)
+                let timeInterval = Int(route.expectedTravelTime).convertSeconds()
+                
+                print("distance to the place: \(distance) km")
+                print("time to the place: \(timeInterval.min):\(timeInterval.sec.setZeroForSeconds())")
+            }
+        }
+    }
+    
+    private func createDirectionRequest(from coordinate: CLLocationCoordinate2D) -> MKDirections.Request? {
+        guard let destinationCoordinate = placeCoordinate else { return nil }
+        let startingLocation = MKPlacemark(coordinate: coordinate)
+        let destinationLocation = MKPlacemark(coordinate: destinationCoordinate)
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: startingLocation)
+        request.destination = MKMapItem(placemark: destinationLocation)
+        request.transportType = .walking
+        request.requestsAlternateRoutes = true
+        
+        return request
     }
 }
