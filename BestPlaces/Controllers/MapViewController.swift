@@ -25,6 +25,12 @@ class MapViewController: UIViewController {
     lazy var locationManager = CLLocationManager()
     let annotationID = "annotationID"
     var placeCoordinate: CLLocationCoordinate2D?
+    var directionsArray: [MKDirections] = []
+    var previousUserLocation: CLLocation? {
+        didSet {
+            startTrackingUserLocation()
+        }
+    }
     var isGetAddress = false {
         didSet {
             checkLocationServices()
@@ -99,6 +105,7 @@ class MapViewController: UIViewController {
     private let infoRouteLabel: UILabel = {
         let label = UILabel()
         label.isHidden = true
+        label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 2
         return label
@@ -142,6 +149,13 @@ class MapViewController: UIViewController {
         locationManager.delegate = self
     }
     
+    private func resetMapView(withNew directions: MKDirections) {
+        mapView.removeOverlays(mapView.overlays)
+        directionsArray.append(directions)
+        let _ = directionsArray.map { $0.cancel() }
+        directionsArray.removeAll()
+    }
+    
     // MARK: - @IBAction funcs
 
     @IBAction private func dismissButtonTapped() {
@@ -160,7 +174,7 @@ class MapViewController: UIViewController {
     }
     
     @IBAction private func goButtonTapped() {
-        getDirection()
+        getDirections()
         infoRouteLabel.isHidden = false
     }
     
@@ -234,9 +248,9 @@ class MapViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            infoRouteLabel.centerYAnchor.constraint(equalTo: goButton.centerYAnchor),
+            infoRouteLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             infoRouteLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Constraints.sideIndentation),
-            infoRouteLabel.trailingAnchor.constraint(equalTo: goButton.leadingAnchor, constant: -Constants.Constraints.sideIndentation)
+            infoRouteLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.Constraints.sideIndentation)
         ])
     }
 }
@@ -278,6 +292,21 @@ private extension MKMapView {
                                                   latitudinalMeters: regionRadius,
                                                   longitudinalMeters: regionRadius)
         setRegion(coordinateRegion, animated: true)
+    }
+}
+
+//MARK: - tracking user location
+
+private extension MapViewController {
+    private func startTrackingUserLocation() {
+        guard let previousUserLocation = previousUserLocation else { return }
+        let center = getCenterLocationFromMapView(for: mapView)
+        guard center.distance(from: previousUserLocation) > 50 else { return }
+        self.previousUserLocation = center
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.centerLocationButtonTapped()
+        }
     }
 }
 
@@ -338,6 +367,14 @@ extension MapViewController {
         let center = getCenterLocationFromMapView(for: mapView)
         
         let geocoder = CLGeocoder()
+        
+        if isGetAddress == false && previousUserLocation != nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.centerLocationButtonTapped()
+            }
+        }
+        geocoder.cancelGeocode()
+        
         geocoder.reverseGeocodeLocation(center) { (placemarks, error) in
             if let error = error {
                 print(error)
@@ -368,17 +405,23 @@ extension MapViewController {
 //MARK: - get direction
 
 extension MapViewController {
-    private func getDirection() {
+    private func getDirections() {
         guard let location = locationManager.location?.coordinate else {
             showAlert(title: "Error", message: "Current location is not found")
             return
         }
-        guard let request = createDirectionRequest(from: location) else {
+        
+        locationManager.startUpdatingLocation()
+        previousUserLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        
+        guard let request = createDirectionsRequest(from: location) else {
             showAlert(title: "Error", message: "Destination is not found")
             return
         }
         
         let directions = MKDirections(request: request)
+        resetMapView(withNew: directions)
+        
         directions.calculate { response, error in
             if let error = error {
                 print(error)
@@ -398,8 +441,8 @@ extension MapViewController {
                 let timeInterval = Int(route.expectedTravelTime).convertSeconds()
                 
                 self.infoRouteLabel.text = """
-                Distance: \(distance) km
-                Time: \(timeInterval.min):\(timeInterval.sec.setZeroForSeconds())
+Distance: \(distance) km
+Time: \(timeInterval.min):\(timeInterval.sec.setZeroForSeconds())
 """
                 
                 print("distance to the place: \(distance) km")
@@ -408,7 +451,7 @@ extension MapViewController {
         }
     }
     
-    private func createDirectionRequest(from coordinate: CLLocationCoordinate2D) -> MKDirections.Request? {
+    private func createDirectionsRequest(from coordinate: CLLocationCoordinate2D) -> MKDirections.Request? {
         guard let destinationCoordinate = placeCoordinate else { return nil }
         let startingLocation = MKPlacemark(coordinate: coordinate)
         let destinationLocation = MKPlacemark(coordinate: destinationCoordinate)
