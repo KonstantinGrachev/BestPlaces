@@ -96,6 +96,14 @@ class MapViewController: UIViewController {
         return imageView
     }()
     
+    private let infoRouteLabel: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 2
+        return label
+    }()
+    
     //MARK: - viewDidLoad
 
     override func viewDidLoad() {
@@ -126,6 +134,7 @@ class MapViewController: UIViewController {
         mapView.addSubview(pinImageView)
         mapView.addSubview(doneButton)
         mapView.addSubview(goButton)
+        mapView.addSubview(infoRouteLabel)
     }
     
     private func setDelegates() {
@@ -152,6 +161,7 @@ class MapViewController: UIViewController {
     
     @IBAction private func goButtonTapped() {
         getDirection()
+        infoRouteLabel.isHidden = false
     }
     
     // MARK: - setup placemarks
@@ -221,6 +231,12 @@ class MapViewController: UIViewController {
             goButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.Constraints.sideIndentation),
             goButton.widthAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight),
             goButton.heightAnchor.constraint(equalToConstant: Constants.Constraints.centerLocationButtonWidthHeight)
+        ])
+        
+        NSLayoutConstraint.activate([
+            infoRouteLabel.centerYAnchor.constraint(equalTo: goButton.centerYAnchor),
+            infoRouteLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.Constraints.sideIndentation),
+            infoRouteLabel.trailingAnchor.constraint(equalTo: goButton.leadingAnchor, constant: -Constants.Constraints.sideIndentation)
         ])
     }
 }
@@ -380,6 +396,11 @@ extension MapViewController {
                 
                 let distance = String(format: "%.1f", route.distance / 1000)
                 let timeInterval = Int(route.expectedTravelTime).convertSeconds()
+                
+                self.infoRouteLabel.text = """
+                Distance: \(distance) km
+                Time: \(timeInterval.min):\(timeInterval.sec.setZeroForSeconds())
+"""
                 
                 print("distance to the place: \(distance) km")
                 print("time to the place: \(timeInterval.min):\(timeInterval.sec.setZeroForSeconds())")
